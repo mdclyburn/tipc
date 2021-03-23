@@ -62,3 +62,15 @@ void TipFunction::accept(TipTypeVisitor * visitor) {
   }
   visitor->endVisit(this);
 }
+
+bool TipFunction::isPolymorphic() const {
+  auto params_it = this->getParams();
+  for (auto it = params_it.begin(); it != params_it.end(); it++) {
+    std::shared_ptr<TipType> t = *it;
+    if (std::dynamic_pointer_cast<std::shared_ptr<TipAlpha>>(t)) {
+      return true;
+    }
+  }
+
+  return false;
+}
