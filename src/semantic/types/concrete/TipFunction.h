@@ -24,8 +24,6 @@ public:
 
   void accept(TipTypeVisitor *visitor) override;
 
-  bool isPolymorphic() const;
-
 protected:
   std::ostream& print(std::ostream &out) const override;
 

@@ -3,13 +3,32 @@
 #include "LocalNameCollector.h"
 #include "FieldNameCollector.h"
 
+#include <algorithm>
 #include <sstream>
 
 std::unique_ptr<SymbolTable> SymbolTable::build(ASTProgram* p) {
   auto fMap = FunctionNameCollector::build(p);
   auto lMap = LocalNameCollector::build(p, fMap);
-  auto fSet = FieldNameCollector::build(p); 
+  auto fSet = FieldNameCollector::build(p);
   return std::make_unique<SymbolTable>(fMap, lMap, fSet);
+}
+
+std::unique_ptr<SymbolTable> SymbolTable::build(ASTProgram* const p,
+                                                const std::string& function_name) {
+  // Perhaps a better option would be to create an overload on the collector?
+  auto f_map = FunctionNameCollector::build(p);
+  for (auto it = f_map.begin(); it != f_map.end(); it++) {
+    if (it->first.compare(function_name) != 0) {
+      it = f_map.erase(it);
+    }
+  }
+
+  // What effect does carrying all of this over have?
+  // There are names in the symbol table that are not in the function of interest...
+  auto l_map = LocalNameCollector::build(p, f_map);
+  auto f_set = FieldNameCollector::build(p);
+
+  return std::make_unique<SymbolTable>(f_map, l_map, f_set);
 }
 
 ASTDeclNode* SymbolTable::getFunction(std::string s) {
@@ -23,7 +42,7 @@ ASTDeclNode* SymbolTable::getFunction(std::string s) {
 std::vector<ASTDeclNode*> SymbolTable::getFunctions() {
   std::vector<ASTDeclNode*> funDecls;
   for (auto &pair : functionNames) {
-    funDecls.push_back(pair.second); 
+    funDecls.push_back(pair.second);
   }
   return funDecls;
 }
@@ -41,7 +60,7 @@ std::vector<ASTDeclNode*> SymbolTable::getLocals(ASTDeclNode* f) {
   auto lMap = localNames.find(f)->second;
   std::vector<ASTDeclNode*> localDecls;
   for (auto &pair : lMap) {
-    localDecls.push_back(pair.second); 
+    localDecls.push_back(pair.second);
   }
   return localDecls;
 }
@@ -52,7 +71,7 @@ std::vector<std::string> SymbolTable::getFields() {
 }
 
 void SymbolTable::print(std::ostream &s) {
-  s << "Functions : {"; 
+  s << "Functions : {";
   auto skip = true;
   for (auto e : functionNames) {
     if (skip) {
@@ -60,11 +79,11 @@ void SymbolTable::print(std::ostream &s) {
       s << e.first;
       continue;
     }
-    s << ", " + e.first; 
+    s << ", " + e.first;
   }
   s << "}\n";
 
-  s << "Fields : {"; 
+  s << "Fields : {";
   skip = true;
   for (auto n : fieldNames) {
     if (skip) {
@@ -85,7 +104,7 @@ void SymbolTable::print(std::ostream &s) {
         s << l.first;
         continue;
       }
-      s << ", " + l.first; 
+      s << ", " + l.first;
     }
     s << "}\n";
   }

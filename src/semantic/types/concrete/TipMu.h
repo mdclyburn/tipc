@@ -22,6 +22,8 @@ public:
 
     void accept(TipTypeVisitor *visitor) override;
 
+  bool containsFreeVariable() const override;
+
 protected:
     std::ostream& print(std::ostream &out) const override;
 
@@ -29,5 +31,3 @@ private:
     std::shared_ptr<TipVar> v;
     std::shared_ptr<TipType> t;
 };
-
-

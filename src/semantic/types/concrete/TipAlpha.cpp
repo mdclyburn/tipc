@@ -37,3 +37,6 @@ void TipAlpha::accept(TipTypeVisitor * visitor) {
   visitor->endVisit(this);
 }
 
+bool TipAlpha::containsFreeVariable() const {
+  return true;
+}

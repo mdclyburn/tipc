@@ -20,7 +20,9 @@ public:
 
     ASTNode* getNode() const { return node; }
 
-    void accept(TipTypeVisitor *visitor) override;
+    virtual void accept(TipTypeVisitor *visitor) override;
+
+  virtual bool containsFreeVariable() const override;
 
 protected:
     //! \brief Type variables printed as ASTNode@line:col
@@ -28,4 +30,3 @@ protected:
 
     ASTNode * node;
 };
-

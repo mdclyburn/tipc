@@ -13,7 +13,7 @@
  * each function.  In addition it records the set of field names used
  * in the program.  Errors are reported by raising a SemanticError exception.
  * \sa SemanticError
- */ 
+ */
 class SymbolTable {
   std::map<std::string, ASTDeclNode*> functionNames;
   std::map<ASTDeclNode*, std::map<std::string, ASTDeclNode*>> localNames;
@@ -54,12 +54,16 @@ public:
    *  \brief Perform symbol analysis and construct symbol table.
    *
    * Errors are reported by raising a SemanticError exception.
-   * \param p The AST for the program. 
+   * \param p The AST for the program.
    * \return The symbol table.
    */
   static std::unique_ptr<SymbolTable> build(ASTProgram* p);
 
+  /** Build a symbol table for a specific function.
+   */
+  static std::unique_ptr<SymbolTable> build(ASTProgram* const p,
+                                            const std::string& function_name);
+
   //! Print symbol table contents to output stream
   void print(std::ostream &os);
 };
-

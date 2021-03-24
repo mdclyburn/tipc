@@ -13,18 +13,18 @@ class TipTypeVisitor;
  */
 class TipType {
 public:
-    virtual bool operator==(const TipType& other) const = 0;
-    virtual bool operator!=(const TipType& other) const = 0;
-    virtual ~TipType() = default;
-    friend std::ostream& operator<<(std::ostream& os, const TipType& obj) {
-        return obj.print(os);
-    }
+  virtual bool operator==(const TipType& other) const = 0;
+  virtual bool operator!=(const TipType& other) const = 0;
+  virtual ~TipType() = default;
+  friend std::ostream& operator<<(std::ostream& os, const TipType& obj) {
+    return obj.print(os);
+  }
 
-    virtual void accept(TipTypeVisitor *visitor) = 0;
+  virtual void accept(TipTypeVisitor *visitor) = 0;
+
+  virtual bool containsFreeVariable() const = 0;
 
 protected:
-    virtual std::ostream& print(std::ostream &out) const = 0;
+  virtual std::ostream& print(std::ostream &out) const = 0;
 
 };
-
-

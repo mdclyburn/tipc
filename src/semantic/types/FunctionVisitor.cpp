@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "TipFunction.h"
 #include "TypeConstraintCollectVisitor.h"
 #include "TypeInference.h"
 #include "Unifier.h"
@@ -39,10 +40,22 @@ bool FunctionVisitor::visit(ASTFunction* element)
 
   auto fn_inference = std::make_unique<TypeInference>(
     _symbol_table, std::move(unifier));
+
+  // This shouldn't come back null, but here we are just
+  // crossing our fingers and hope that this isn't null.
+  ASTDeclNode* const decl = _symbol_table->getFunction(function_name);
+  auto inferred_type = fn_inference->getInferredType(decl);
+
   std::cout << "INFERENCE FOR "
             << function_name
-            << ":" << std::endl;
-  fn_inference->print(std::cout);
+            << ": " << *inferred_type << std::endl;
+
+  // ...because this is guaranteed to be a TipFunction?
+  std::shared_ptr<TipFunction> f_type = std::static_pointer_cast<TipFunction>(inferred_type);
+  if (f_type->containsFreeVariable()) {
+    std::cout << "Function " << function_name << " is polymorphic." << std::endl;
+    _polymorphic_fns.push_back(element);
+  }
 
   return false;
 }

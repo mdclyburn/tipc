@@ -29,3 +29,7 @@ void TipVar::accept(TipTypeVisitor * visitor) {
   visitor->visit(this);
   visitor->endVisit(this);
 }
+
+bool TipVar::containsFreeVariable() const {
+  return false;
+}
