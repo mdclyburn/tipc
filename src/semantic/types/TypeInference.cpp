@@ -1,3 +1,4 @@
+#include "PolymorphicIdentifierVisitor.h"
 #include "TypeInference.h"
 #include "TypeConstraint.h"
 #include "TypeConstraintCollectVisitor.h"
@@ -10,12 +11,20 @@
  * can be subsequently queried.
  */
 std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable* symbols) {
+  // Identify polymorphic functions.
+  PolymorphicIdentifierVisitor f_visitor(symbols);
+  ast->accept(&f_visitor);
+  auto polys = f_visitor.polymorphicFunctions();
+  for (auto fn_name : polys) {
+    std::cout << "Polymorphic function: " << fn_name << std::endl;
+  }
+
   TypeConstraintCollectVisitor visitor(symbols);
   ast->accept(&visitor);
 
   auto unifier =  std::make_unique<Unifier>(visitor.getCollectedConstraints());
   unifier->solve();
- 
+
   return std::make_unique<TypeInference>(symbols, std::move(unifier));
 }
 
@@ -25,7 +34,7 @@ std::shared_ptr<TipType> TypeInference::getInferredType(ASTDeclNode *node) {
 };
 
 void TypeInference::print(std::ostream &s) {
-  s << "\nFunctions : {\n"; 
+  s << "\nFunctions : {\n";
   auto skip = true;
   for (auto f : symbols->getFunctions()) {
     if (skip) {
@@ -33,7 +42,7 @@ void TypeInference::print(std::ostream &s) {
       s << "  " << f->getName() << " : " << *getInferredType(f);
       continue;
     }
-    s << ",\n  " + f->getName() << " : " << *getInferredType(f); 
+    s << ",\n  " + f->getName() << " : " << *getInferredType(f);
   }
   s << "\n}\n";
 
@@ -53,4 +62,3 @@ void TypeInference::print(std::ostream &s) {
     s << "\n}\n";
   }
 }
-

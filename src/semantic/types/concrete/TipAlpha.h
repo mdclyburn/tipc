@@ -15,14 +15,14 @@ public:
      *
      * \param node The expression or decl node
      */
-    TipAlpha(ASTNode *node); 
+    TipAlpha(ASTNode *node);
 
     /*! \brief Constructor for record or access exprs
      *
      * \param node The record or access expr
      * \param name The field name
      */
-    TipAlpha(ASTNode *node, std::string const name); 
+    TipAlpha(ASTNode *node, std::string const name);
 
     std::string const & getName() const;
 
@@ -31,10 +31,10 @@ public:
 
     void accept(TipTypeVisitor *visitor) override;
 
+  bool containsFreeVariable() const override;
+
 protected:
     std::ostream& print(std::ostream &out) const override;
 
     std::string const name;
 };
-
-

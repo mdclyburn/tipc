@@ -40,3 +40,13 @@ void TipCons::setArguments(std::vector<std::shared_ptr<TipType>> &a) {
 const std::vector<std::shared_ptr<TipType>> &TipCons::getArguments() const {
     return arguments;
 }
+
+bool TipCons::containsFreeVariable() const {
+  for (auto it = arguments.begin(); it != arguments.end(); it++) {
+    if ((*it)->containsFreeVariable()) {
+      return true;
+    }
+  }
+
+  return false;
+}

@@ -36,3 +36,7 @@ void TipMu::accept(TipTypeVisitor * visitor) {
   }
   visitor->endVisit(this);
 }
+
+bool TipMu::containsFreeVariable() const {
+  return t->containsFreeVariable();
+}
