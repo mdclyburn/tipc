@@ -14,6 +14,10 @@ std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable
   // Identify polymorphic functions.
   FunctionVisitor f_visitor(symbols);
   ast->accept(&f_visitor);
+  auto polys = f_visitor.polymorphicFunctions();
+  for (auto fn_name : polys) {
+    std::cout << "Polymorphic function: " << fn_name << std::endl;
+  }
 
   TypeConstraintCollectVisitor visitor(symbols);
   ast->accept(&visitor);

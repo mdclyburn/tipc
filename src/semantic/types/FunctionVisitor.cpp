@@ -41,8 +41,13 @@ bool FunctionVisitor::visit(ASTFunction* element)
   ASTDeclNode* const decl = _symbol_table->getFunction(function_name);
   auto inferred_type = fn_inference->getInferredType(decl);
   if (inferred_type->containsFreeVariable()) {
-    _polymorphic_fns.push_back(function_name);
+    _polymorphic_fns.emplace(function_name);
   }
 
   return false;
+}
+
+const std::unordered_set<std::string>&
+FunctionVisitor::polymorphicFunctions() const {
+  return _polymorphic_fns;
 }
