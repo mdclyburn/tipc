@@ -15,55 +15,34 @@ FunctionVisitor::FunctionVisitor(SymbolTable* const syms) :
 
 bool FunctionVisitor::visit(ASTFunction* element)
 {
-  std::cout << "FunctionVisitor: visiting "
-            << element->getName() << std::endl;
-
   const std::string function_name = element->getName();
   // Skip any function named main.
   if (function_name.compare("main") == 0) {
-    std::cout << "Skipping a main function." << std::endl;
     return false;
-  } else {
-    std::cout << "Performing per-function typing for '"
-              << function_name << "'." << std::endl;
   }
 
   // Perform type inference on this function.
+  // Note: the symbol table provided to the visitor is one
+  // for the entire program and is not specific to the function
+  // currently under analysis.
   TypeConstraintCollectVisitor typing_visitor(_symbol_table);
   element->accept(&typing_visitor);
+
+  // Produce a solution from the collected constraints.
   std::unique_ptr<Unifier> unifier = std::make_unique<Unifier>(
     typing_visitor.getCollectedConstraints());
-
-  std::cout << "Solving constraints for "
-            << function_name << std::endl;
   unifier->solve();
 
   auto fn_inference = std::make_unique<TypeInference>(
     _symbol_table, std::move(unifier));
 
-  // This shouldn't come back null, but here we are just
-  // crossing our fingers and hope that this isn't null.
+  // Get a type inference for the given function. If it contains a
+  // free variable, then it is a polymorphic function.
   ASTDeclNode* const decl = _symbol_table->getFunction(function_name);
   auto inferred_type = fn_inference->getInferredType(decl);
-
-  std::cout << "INFERENCE FOR "
-            << function_name
-            << ": " << *inferred_type << std::endl;
-
-  // ...because this is guaranteed to be a TipFunction?
-  std::shared_ptr<TipFunction> f_type = std::static_pointer_cast<TipFunction>(inferred_type);
-  if (f_type->containsFreeVariable()) {
-    std::cout << "Function " << function_name << " is polymorphic." << std::endl;
-    _polymorphic_fns.push_back(element);
+  if (inferred_type->containsFreeVariable()) {
+    _polymorphic_fns.push_back(function_name);
   }
 
   return false;
-}
-
-void FunctionVisitor::endVisit(ASTFunction* element)
-{
-  std::cout << "FunctionVisitor: leaving "
-            << element->getName() << std::endl;
-
-  return;
 }

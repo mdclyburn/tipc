@@ -9,12 +9,16 @@
 
 class FunctionVisitor : public ASTVisitor {
 public:
+  /** Constructor.
+   *
+   * \param syms Symbol table for the program under analysis.
+   */
   explicit FunctionVisitor(SymbolTable* const syms);
 
   bool visit(ASTFunction* element) override;
-  void endVisit(ASTFunction* element) override;
 
 private:
   SymbolTable* const _symbol_table;
-  std::vector<ASTFunction*> _polymorphic_fns;
+  // Names of functions identified as polymorphic.
+  std::vector<std::string> _polymorphic_fns;
 };

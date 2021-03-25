@@ -22,6 +22,8 @@ public:
 
   virtual void accept(TipTypeVisitor *visitor) = 0;
 
+  /** Returns true if the type contains a free variable.
+   */
   virtual bool containsFreeVariable() const = 0;
 
 protected:

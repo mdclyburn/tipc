@@ -11,8 +11,7 @@
  * can be subsequently queried.
  */
 std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable* symbols) {
-  // At this point, I have no idea how bad this is,
-  // but I'm giving the symbol table to f_visitor...
+  // Identify polymorphic functions.
   FunctionVisitor f_visitor(symbols);
   ast->accept(&f_visitor);
 
