@@ -11,15 +11,15 @@
  *
  * This visitor makes type inferences for each function encountered in the program (except for 'main').
  * When a function's arguments or return value are free variables, the function is considered polymorphic.
- * Use FunctionVisitor::isPolymorphic() to query for polymorphic functions.
+ * Use PolymorhpicIdentifierVisitor.h::isPolymorphic() to query for polymorphic functions.
  */
-class FunctionVisitor : public ASTVisitor {
+class PolymorphicIdentifierVisitor : public ASTVisitor {
 public:
   /** Constructor.
    *
    * \param syms Symbol table for the program under analysis.
    */
-  explicit FunctionVisitor(SymbolTable* const syms);
+  explicit PolymorphicIdentifierVisitor(SymbolTable* const syms);
 
   bool visit(ASTFunction* element) override;
 

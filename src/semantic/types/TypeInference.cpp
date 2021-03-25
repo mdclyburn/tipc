@@ -1,4 +1,4 @@
-#include "FunctionVisitor.h"
+#include "PolymorphicIdentifierVisitor.h"
 #include "TypeInference.h"
 #include "TypeConstraint.h"
 #include "TypeConstraintCollectVisitor.h"
@@ -12,7 +12,7 @@
  */
 std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable* symbols) {
   // Identify polymorphic functions.
-  FunctionVisitor f_visitor(symbols);
+  PolymorphicIdentifierVisitor f_visitor(symbols);
   ast->accept(&f_visitor);
   auto polys = f_visitor.polymorphicFunctions();
   for (auto fn_name : polys) {

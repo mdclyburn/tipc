@@ -1,4 +1,4 @@
-#include "FunctionVisitor.h"
+#include "PolymorphicIdentifierVisitor.h"
 
 #include <iostream>
 
@@ -7,13 +7,13 @@
 #include "TypeInference.h"
 #include "Unifier.h"
 
-FunctionVisitor::FunctionVisitor(SymbolTable* const syms) :
+PolymorphicIdentifierVisitor::PolymorphicIdentifierVisitor(SymbolTable* const syms) :
   ASTVisitor(),
   _symbol_table(syms)
 {
 }
 
-bool FunctionVisitor::visit(ASTFunction* element)
+bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
 {
   const std::string function_name = element->getName();
   // Skip any function named main.
@@ -48,6 +48,6 @@ bool FunctionVisitor::visit(ASTFunction* element)
 }
 
 const std::unordered_set<std::string>&
-FunctionVisitor::polymorphicFunctions() const {
+PolymorphicIdentifierVisitor::polymorphicFunctions() const {
   return _polymorphic_fns;
 }
