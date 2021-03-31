@@ -31,7 +31,6 @@ TEST_CASE("Symbol Table: locals", "[SymbolTable]") {
     REQUIRE(found!=std::string::npos);
 }
 
-
 TEST_CASE("Symbol Table: functions", "[SymbolTable]") {
     std::stringstream stream;
     stream << R"(foo() { return 0; } bar() { return 1; } baz() { return 2;})";
@@ -50,6 +49,27 @@ TEST_CASE("Symbol Table: functions", "[SymbolTable]") {
 
     found = output.find("foo : {}");
     REQUIRE(found!=std::string::npos);
+}
+
+TEST_CASE("Symbol Table: singleton function analysis", "[SymbolTable]") {
+    std::stringstream stream;
+    stream << R"(foo() { return 0; } bar() { return 1; } baz() { return 2;})";
+
+    auto ast = ASTHelper::build_ast(stream);
+
+    std::unique_ptr<SymbolTable> symbols;
+    REQUIRE_NOTHROW(symbols = SymbolTable::build(ast.get(), "baz"));
+
+    std::stringstream outputStream;
+    symbols->print(outputStream);
+    std::string output = outputStream.str();
+    std::cout << output << "\n";
+
+    std::size_t found = output.find("Functions : {baz}");
+    REQUIRE(found!=std::string::npos);
+
+    found = output.find("bar : {}");
+    REQUIRE(found==std::string::npos);
 }
 
 TEST_CASE("Symbol Table: params", "[SymbolTable]") {
@@ -179,3 +199,4 @@ TEST_CASE("Symbol Table: functions clash ", "[SymbolTable]") {
                            SemanticError,
                            ContainsWhat("foo already declared"));
 }
+

@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <sstream>
+#include <iostream>
 
 std::unique_ptr<SymbolTable> SymbolTable::build(ASTProgram* p) {
   auto fMap = FunctionNameCollector::build(p);
@@ -17,18 +18,25 @@ std::unique_ptr<SymbolTable> SymbolTable::build(ASTProgram* const p,
                                                 const std::string& function_name) {
   // Perhaps a better option would be to create an overload on the collector?
   auto f_map = FunctionNameCollector::build(p);
-  for (auto it = f_map.begin(); it != f_map.end(); it++) {
+  /*for (auto it = f_map.begin(); it != f_map.end(); it++) {
     if (it->first.compare(function_name) != 0) {
+      std::cout << function_name << "\n";
       it = f_map.erase(it);
+      std::cout << "k\n";
     }
-  }
+  }*/ // This had bugs with removing from a data structure while going through it (should have been it+= ?)
+  std::map<std::string, ASTDeclNode*> new_f_map;
+  if (f_map.count(function_name) > 0)
+    new_f_map.emplace(function_name, f_map.at(function_name));
 
   // What effect does carrying all of this over have?
   // There are names in the symbol table that are not in the function of interest...
-  auto l_map = LocalNameCollector::build(p, f_map);
+  auto l_map = LocalNameCollector::build(p, new_f_map);
   auto f_set = FieldNameCollector::build(p);
 
-  return std::make_unique<SymbolTable>(f_map, l_map, f_set);
+  std::cout << function_name << "\n";
+
+  return std::make_unique<SymbolTable>(new_f_map, l_map, f_set);
 }
 
 ASTDeclNode* SymbolTable::getFunction(std::string s) {
