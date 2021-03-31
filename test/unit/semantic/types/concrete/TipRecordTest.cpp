@@ -2,6 +2,7 @@
 #include "TipInt.h"
 #include "TipRef.h"
 #include "TipRecord.h"
+#include "TipAlpha.h"
 #include <sstream>
 #include <iostream>
 
@@ -98,4 +99,15 @@ TEST_CASE("TipRecord: Test output stream" "[TipRecord]") {
     std::string actualValue = stream.str();
 
     REQUIRE(expectedValue == actualValue);
+}
+
+TEST_CASE("TipRecord: " "[TipRecord]") {
+    ASTNumberExpr num(13);
+    std::vector<std::shared_ptr<TipType>> inits {
+            std::make_shared<TipInt>(),
+            std::make_shared<TipAlpha>(&num)
+    };
+    std::vector<std::string> names {"foo", "bar"};
+    TipRecord tipRecord(inits, names);
+    REQUIRE(tipRecord.containsFreeVariable());
 }

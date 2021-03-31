@@ -2,6 +2,8 @@
 #include "TipInt.h"
 #include "TipRef.h"
 #include "TipFunction.h"
+#include "ASTNumberExpr.h"
+#include "TipAlpha.h"
 #include <sstream>
 #include <iostream>
 
@@ -77,4 +79,16 @@ TEST_CASE("TipFunction: Test output stream" "[TipFunction]") {
     std::string actualValue = stream.str();
 
     REQUIRE(expectedValue == actualValue);
+}
+
+TEST_CASE("TipFunction: Test containsfreevariable depends on content" "[TipFunction]") {
+    ASTNumberExpr num(13);
+    std::vector<std::shared_ptr<TipType>> params1 { std::make_shared<TipInt>() };
+    std::vector<std::shared_ptr<TipType>> params2 { std::make_shared<TipInt>(), std::make_shared<TipAlpha>(&num) };
+    auto ret = std::make_shared<TipInt>();
+    TipFunction tipFunction1(params1, ret);
+    TipFunction tipFunction2(params2, ret);
+
+    REQUIRE_FALSE(tipFunction1.containsFreeVariable());
+    REQUIRE(tipFunction2.containsFreeVariable());
 }

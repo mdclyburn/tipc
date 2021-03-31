@@ -31,3 +31,8 @@ TEST_CASE("TipInt: test all TipInts are equal", "[tip_int]") {
     TipInt t2;
     REQUIRE(t1 == t2);
 }
+
+TEST_CASE("TipInt: test not a free variable", "[tip_int]") {
+    TipInt t;
+    REQUIRE_FALSE(t.containsFreeVariable());
+}

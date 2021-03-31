@@ -5,6 +5,8 @@
 #include "TipInt.h"
 #include "TipVar.h"
 #include "TipTypeVisitor.h"
+#include "ASTNumberExpr.h"
+#include "TipAlpha.h"
 
 TEST_CASE("TipCons: Test doMatch considers arity" "[TipCons]") {
     auto tipInt = std::make_shared<TipInt>();
@@ -52,5 +54,18 @@ TEST_CASE("TipCons: Test doMatch only works on TipCons" "[TipCons]") {
     auto tipRef = std::make_shared<TipRef>(tipInt);
 
     REQUIRE_FALSE(tipRef->doMatch(tipInt.get()));
+}
+
+TEST_CASE("TipCons: test containsfreevariable relies on internals" "[TipCons]") {
+    auto tipInt = std::make_shared<TipInt>();
+    ASTNumberExpr num(13);
+    auto tipalpha = std::make_shared<TipAlpha>(&num);
+    std::vector<std::shared_ptr<TipType>> params1 { tipInt };
+    std::vector<std::shared_ptr<TipType>> params2 { tipalpha, tipInt };
+    auto tipFunction1 = std::make_shared<TipFunction>(params1, tipInt);
+    auto tipFunction2 = std::make_shared<TipFunction>(params2, tipInt);
+
+    REQUIRE_FALSE(tipFunction1->containsFreeVariable());
+    REQUIRE(tipFunction2->containsFreeVariable());
 }
 

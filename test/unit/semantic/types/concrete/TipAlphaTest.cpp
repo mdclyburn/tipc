@@ -35,3 +35,10 @@ TEST_CASE("TipAlpha: Test output stream" "[TipAlpha]") {
 
     REQUIRE(expectedValueA == actualValueA);
 }
+
+TEST_CASE("TipAlpha: Always contains free variable" "[TipAlpha]") {
+    ASTNumberExpr num(13);
+    TipAlpha tipAlpha(&num);
+
+    REQUIRE(tipAlpha.containsFreeVariable());
+}

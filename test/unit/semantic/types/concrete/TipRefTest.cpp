@@ -2,6 +2,7 @@
 #include "TipInt.h"
 #include "TipRef.h"
 #include "TipFunction.h"
+#include "TipAlpha.h"
 #include <sstream>
 
 TEST_CASE("TipRef: Test TipRefs are compared by their underlying term" "[TipRef]") {
@@ -61,4 +62,11 @@ TEST_CASE("TipRef: Test output stream" "[TipRef]") {
     std::string actualValue = stream.str();
 
     REQUIRE(expectedValue == actualValue);
+}
+
+TEST_CASE("TipRef: Test reference to free var" "[TipRef]") {
+    ASTNumberExpr num(13);
+    auto term = std::make_shared<TipAlpha>(&num);
+    TipRef tipRef(term);
+    REQUIRE(tipRef.containsFreeVariable());
 }

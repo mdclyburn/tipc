@@ -2,6 +2,7 @@
 
 #include "TipInt.h"
 #include "TipVar.h"
+#include "TipAlpha.h"
 #include "catch.hpp"
 #include <memory>
 #include <sstream>
@@ -59,4 +60,14 @@ TEST_CASE("TipMu: test output stream", "[TipMu]") {
 
     auto actual = stream.str();
     REQUIRE_THAT(actual, Catch::Matches("^μ\\[\\[42@\\d+:\\d+\\]\\]\\.int$"));
+}
+
+TEST_CASE("TipMu: test containsfreevar depends on tiptype", "[TipMu]") {
+    ASTNumberExpr n1(41);
+    ASTNumberExpr n2(42);
+    auto var = std::make_shared<TipVar>(&n1);
+    auto term = std::make_shared<TipAlpha>(&n2);
+    TipMu mu(var, term);
+
+    REQUIRE(mu.containsFreeVariable());
 }
