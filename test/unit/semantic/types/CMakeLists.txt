@@ -14,6 +14,7 @@ target_sources(typeinference_unit_tests
         ${CMAKE_CURRENT_SOURCE_DIR}/constraints/TypeConstraintTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/solvers/UnifierTest.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/solvers/UnionFindTest.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/PolymorphicIdentifierTest.cpp
 )
 target_include_directories(typeinference_unit_tests
         PUBLIC

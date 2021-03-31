@@ -4,7 +4,7 @@ project(tipc)
 
 # Required packages
 find_package(PkgConfig REQUIRED)
-pkg_search_module(UUID REQUIRED uuid)
+#pkg_search_module(UUID REQUIRED uuid)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/externals/CMake-codecov/cmake")
