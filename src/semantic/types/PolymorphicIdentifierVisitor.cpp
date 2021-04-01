@@ -64,17 +64,9 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunAppExpr* element)
 void PolymorphicIdentifierVisitor::endVisit(ASTFunction* element)
 {
   const std::string function_name = element->getName();
-  std::cout << "Finished polymorphic analysis for"
-            << " '" << function_name << "': ";
   if (_current_fn.has_value() && !_fn_calls_fns) {
-    std::cout << "non-recursive";
     _polymorphic_fns.emplace(function_name);
-  } else if (_current_fn.has_value() && _fn_calls_fns) {
-    std::cout << "possibly recursive";
-  } else {
-    std::cout << "monomorphic";
   }
-  std::cout << std::endl;
 
   return;
 }
