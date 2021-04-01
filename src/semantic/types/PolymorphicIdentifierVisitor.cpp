@@ -11,6 +11,7 @@ PolymorphicIdentifierVisitor::PolymorphicIdentifierVisitor(SymbolTable* const sy
   ASTVisitor(),
   _symbol_table(syms)
 {
+  _fn_calls_fns = false;
 }
 
 bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
@@ -41,10 +42,41 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
   ASTDeclNode* const decl = _symbol_table->getFunction(function_name);
   auto inferred_type = fn_inference->getInferredType(decl);
   if (inferred_type->containsFreeVariable()) {
-    _polymorphic_fns.emplace(function_name);
+    // We want to look for function calls in this function.
+    _current_fn = element;
+    _fn_calls_fns = false;
+    return true;
+  } else {
+    // We do not care to traverse into monomorphic functions.
+    _current_fn = std::nullopt;
+    return false;
   }
 
+  return true;
+}
+
+bool PolymorphicIdentifierVisitor::visit(ASTFunAppExpr* element)
+{
+  _fn_calls_fns = true;
   return false;
+}
+
+void PolymorphicIdentifierVisitor::endVisit(ASTFunction* element)
+{
+  const std::string function_name = element->getName();
+  std::cout << "Finished polymorphic analysis for"
+            << " '" << function_name << "': ";
+  if (_current_fn.has_value() && !_fn_calls_fns) {
+    std::cout << "non-recursive";
+    _polymorphic_fns.emplace(function_name);
+  } else if (_current_fn.has_value() && _fn_calls_fns) {
+    std::cout << "possibly recursive";
+  } else {
+    std::cout << "monomorphic";
+  }
+  std::cout << std::endl;
+
+  return;
 }
 
 const std::unordered_set<std::string>&
