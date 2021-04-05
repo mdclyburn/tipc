@@ -1,8 +1,13 @@
 #include "TypeConstraintCollectVisitor.h"
 #include "ConstraintCollector.h"
 
-TypeConstraintCollectVisitor::TypeConstraintCollectVisitor(SymbolTable *pTable)
-  : TypeConstraintVisitor(pTable, std::move(buildConstraintHandler())) { }
+TypeConstraintCollectVisitor::TypeConstraintCollectVisitor(SymbolTable *pTable,
+                                                           const std::set<std::string>& polys)
+  : TypeConstraintVisitor(pTable,
+                          polys,
+                          std::move(buildConstraintHandler()))
+{
+}
 
 std::unique_ptr<ConstraintHandler> TypeConstraintCollectVisitor::buildConstraintHandler() {
     return std::make_unique<ConstraintCollector>();

@@ -18,9 +18,11 @@
  */
 class TypeConstraintCollectVisitor: public TypeConstraintVisitor {
 public:
-    explicit TypeConstraintCollectVisitor(SymbolTable *pTable);
-    std::vector<TypeConstraint>& getCollectedConstraints();
-private:
-    static std::unique_ptr<ConstraintHandler> buildConstraintHandler();
-};
+  explicit TypeConstraintCollectVisitor(SymbolTable *pTable,
+                                        const std::set<std::string>& polys);
 
+  std::vector<TypeConstraint>& getCollectedConstraints();
+
+private:
+  static std::unique_ptr<ConstraintHandler> buildConstraintHandler();
+};

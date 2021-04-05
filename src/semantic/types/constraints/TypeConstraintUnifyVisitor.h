@@ -11,8 +11,8 @@
  */
 class TypeConstraintUnifyVisitor: public TypeConstraintVisitor {
 public:
-    explicit TypeConstraintUnifyVisitor(SymbolTable *pTable);
+  explicit TypeConstraintUnifyVisitor(SymbolTable *pTable,
+                                      const std::set<std::string>& polys);
 private:
     static std::unique_ptr<ConstraintHandler> buildConstraintHandler();
 };
-

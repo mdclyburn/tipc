@@ -26,7 +26,7 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
   // Note: the symbol table provided to the visitor is one
   // for the entire program and is not specific to the function
   // currently under analysis.
-  TypeConstraintCollectVisitor typing_visitor(_symbol_table);
+  TypeConstraintCollectVisitor typing_visitor(_symbol_table, std::set<std::string>());
   element->accept(&typing_visitor);
 
   // Produce a solution from the collected constraints.
@@ -71,7 +71,7 @@ void PolymorphicIdentifierVisitor::endVisit(ASTFunction* element)
   return;
 }
 
-const std::unordered_set<std::string>&
+const std::set<std::string>&
 PolymorphicIdentifierVisitor::polymorphicFunctions() const {
   return _polymorphic_fns;
 }

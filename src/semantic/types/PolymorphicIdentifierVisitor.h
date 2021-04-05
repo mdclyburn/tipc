@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <optional>
-#include <unordered_set>
+#include <set>
 
 #include "ASTFunction.h"
 #include "ASTFunAppExpr.h"
@@ -30,7 +30,7 @@ public:
 
   /** Returns a reference to the collection of polymorphic functions.
    */
-  const std::unordered_set<std::string>& polymorphicFunctions() const;
+  const std::set<std::string>& polymorphicFunctions() const;
 
 private:
   SymbolTable* const _symbol_table;
@@ -38,5 +38,5 @@ private:
   std::optional<ASTFunction*> _current_fn;
   bool _fn_calls_fns;
   // Names of functions identified as polymorphic.
-  std::unordered_set<std::string> _polymorphic_fns;
+  std::set<std::string> _polymorphic_fns;
 };

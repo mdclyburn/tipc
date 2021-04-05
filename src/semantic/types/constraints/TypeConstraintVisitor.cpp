@@ -6,8 +6,14 @@
 #include "TipRecord.h"
 #include "TipInt.h"
 
-TypeConstraintVisitor::TypeConstraintVisitor(SymbolTable* st, std::unique_ptr<ConstraintHandler> handler)
-  : symbolTable(st), constraintHandler(std::move(handler)) {};
+TypeConstraintVisitor::TypeConstraintVisitor(SymbolTable* st,
+                                             const std::set<std::string>& polys,
+                                             std::unique_ptr<ConstraintHandler> handler) :
+  symbolTable(st),
+  polymorphicFunctions(polys),
+  constraintHandler(std::move(handler))
+{
+}
 
 /*! \fn astToVar
  *  \brief Convert an AST node to a type variable.
@@ -24,8 +30,8 @@ std::shared_ptr<TipType> TypeConstraintVisitor::astToVar(ASTNode * n) {
       return std::make_shared<TipVar>(canonical);
     } else if ((canonical = symbolTable->getFunction(ve->getName()))) {
       return std::make_shared<TipVar>(canonical);
-    } 
-  } 
+    }
+  }
 
   return std::make_shared<TipVar>(n);
 }
@@ -65,7 +71,7 @@ void TypeConstraintVisitor::endVisit(ASTFunction * element) {
       formals.push_back(astToVar(f));
     }
 
-    // Return is the last statement 
+    // Return is the last statement
     auto ret = dynamic_cast<ASTReturnStmt*>(element->getStmts().back());
 
     constraintHandler->handle(astToVar(element->getDecl()),
@@ -75,7 +81,7 @@ void TypeConstraintVisitor::endVisit(ASTFunction * element) {
 
 /*! \brief Type constraints for numeric literal.
  *
- * Type rules for "I":  
+ * Type rules for "I":
  *   [[I]] = int
  */
 void TypeConstraintVisitor::endVisit(ASTNumberExpr * element) {
@@ -178,7 +184,7 @@ void TypeConstraintVisitor::endVisit(ASTNullExpr * element) {
  *
  * Type rules for "*E1 = E2":
  *   [[E1]] = &[[E2]]
- * 
+ *
  * Note that these are slightly more general than the rules in the SPA book.
  * The first allows for record expressions on the left hand side and the second
  * allows for more complex assignments, e.g., "**p = &x"
@@ -242,7 +248,7 @@ void TypeConstraintVisitor::endVisit(ASTRecordExpr * element) {
     if (matched) continue;
 
     fieldTypes.push_back(std::make_shared<TipAlpha>(element, f));
-  } 
+  }
   constraintHandler->handle(astToVar(element), std::make_shared<TipRecord>(fieldTypes, allFields));
 }
 
@@ -262,7 +268,7 @@ void TypeConstraintVisitor::endVisit(ASTAccessExpr * element) {
     } else {
       fieldTypes.push_back(std::make_shared<TipAlpha>(element, f));
     }
-  } 
+  }
   constraintHandler->handle(astToVar(element->getRecord()),
                             std::make_shared<TipRecord>(fieldTypes, allFields));
 }
@@ -275,4 +281,3 @@ void TypeConstraintVisitor::endVisit(ASTAccessExpr * element) {
 void TypeConstraintVisitor::endVisit(ASTErrorStmt * element) {
   constraintHandler->handle(astToVar(element->getArg()), std::make_shared<TipInt>());
 }
-
