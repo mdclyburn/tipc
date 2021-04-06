@@ -1,4 +1,5 @@
 #include "PolymorphicIdentifierVisitor.h"
+#include "CalleeIdentifier.h"
 
 #include <iostream>
 
@@ -41,7 +42,10 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
   ASTDeclNode* const decl = _symbol_table->getFunction(function_name);
   auto inferred_type = fn_inference->getInferredType(decl);
   if (inferred_type->containsFreeVariable()) {
-    _polymorphic_fns.emplace(function_name);
+    // Do the basic "contains a self-call" check
+    auto called_funcs = CalleeIdentifier::build(element);
+    if (std::find(called_funcs.begin(), called_funcs.end(), function_name) == called_funcs.end())
+        _polymorphic_fns.emplace(function_name);
   }
 
   return false;

@@ -63,12 +63,12 @@ TEST_CASE("Symbol Table: singleton function analysis", "[SymbolTable]") {
     std::stringstream outputStream;
     symbols->print(outputStream);
     std::string output = outputStream.str();
-    std::cout << output << "\n";
+    std::cout << output << "\n"; // remove this line later
 
     std::size_t found = output.find("Functions : {baz}");
     REQUIRE(found!=std::string::npos);
 
-    found = output.find("bar : {}");
+    found = output.find("bar : {}"); // currently failing
     REQUIRE(found==std::string::npos);
 }
 
