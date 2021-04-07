@@ -1,8 +1,9 @@
 #include "TypeConstraintCollectVisitor.h"
 #include "ConstraintCollector.h"
 
-TypeConstraintCollectVisitor::TypeConstraintCollectVisitor(SymbolTable *pTable,
-                                                           const std::set<std::string>& polys)
+TypeConstraintCollectVisitor::TypeConstraintCollectVisitor(
+  SymbolTable *pTable,
+  const std::map<std::string, std::shared_ptr<TipFunction>>& polys)
   : TypeConstraintVisitor(pTable,
                           polys,
                           std::move(buildConstraintHandler()))

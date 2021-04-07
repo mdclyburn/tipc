@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "TipVar.h"
 #include "TipCons.h"
 #include <string>

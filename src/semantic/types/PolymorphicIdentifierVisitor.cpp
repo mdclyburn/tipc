@@ -26,7 +26,9 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
   // Note: the symbol table provided to the visitor is one
   // for the entire program and is not specific to the function
   // currently under analysis.
-  TypeConstraintCollectVisitor typing_visitor(_symbol_table, std::set<std::string>());
+  TypeConstraintCollectVisitor typing_visitor(
+    _symbol_table,
+    std::map<std::string, std::shared_ptr<TipFunction>>());
   element->accept(&typing_visitor);
 
   // Produce a solution from the collected constraints.
@@ -41,6 +43,14 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
   // free variable, then it is a polymorphic function.
   ASTDeclNode* const decl = _symbol_table->getFunction(function_name);
   auto inferred_type = fn_inference->getInferredType(decl);
+  this->_inferences.insert({
+      function_name,
+      std::dynamic_pointer_cast<TipFunction>(inferred_type)
+    });
+  std::cout << "Inferred type for "
+            << "'" << function_name << "': "
+            << *inferred_type << std::endl;
+
   if (inferred_type->containsFreeVariable()) {
     // We want to look for function calls in this function.
     _current_fn = element;
@@ -74,4 +84,9 @@ void PolymorphicIdentifierVisitor::endVisit(ASTFunction* element)
 const std::set<std::string>&
 PolymorphicIdentifierVisitor::polymorphicFunctions() const {
   return _polymorphic_fns;
+}
+
+const std::map<std::string, std::shared_ptr<TipFunction>>&
+PolymorphicIdentifierVisitor::inferences() {
+   return this->_inferences;
 }

@@ -15,7 +15,7 @@ std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable
   PolymorphicIdentifierVisitor f_visitor(symbols);
   ast->accept(&f_visitor);
 
-  TypeConstraintCollectVisitor visitor(symbols, f_visitor.polymorphicFunctions());
+  TypeConstraintCollectVisitor visitor(symbols, f_visitor.inferences());
   ast->accept(&visitor);
 
   auto unifier = std::make_unique<Unifier>(visitor.getCollectedConstraints());

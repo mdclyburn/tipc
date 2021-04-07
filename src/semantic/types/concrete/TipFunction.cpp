@@ -2,8 +2,13 @@
 #include "TipTypeVisitor.h"
 #include <sstream>
 
-TipFunction::TipFunction(std::vector<std::shared_ptr<TipType>> params, std::shared_ptr<TipType> ret):
-  TipCons(std::move(combine(params, ret))) { }
+uint32_t TipFunction::instance = 1;
+
+TipFunction::TipFunction(std::vector<std::shared_ptr<TipType>> params,
+                         std::shared_ptr<TipType> ret):
+  TipCons(std::move(combine(params, ret)))
+{
+}
 
 std::vector<std::shared_ptr<TipType>> TipFunction::combine(
         std::vector<std::shared_ptr<TipType>> params,
@@ -63,12 +68,36 @@ void TipFunction::accept(TipTypeVisitor * visitor) {
   visitor->endVisit(this);
 }
 
+bool TipFunction::isInstantiated() const {
+  return this->__is_instantiated;
+}
+
 TipType* TipFunction::instantiate() const {
   std::vector<std::shared_ptr<TipType>> args;
-  for (auto arg : this->getParams())
-    args.push_back(std::shared_ptr<TipType>(arg->instantiate()));
+  for (auto arg : this->getParams()) {
+    if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arg)) {
+      const std::string inst_name = alpha->getName() + "-" + std::to_string(TipFunction::instance);
+      std::cout << "Instantiated alpha to " << TipFunction::instance << std::endl;
+      std::shared_ptr<TipAlpha> inst_alpha(
+        new TipAlpha(alpha->getNode(), inst_name));
+      args.push_back(inst_alpha);
+    } else {
+      args.push_back(std::shared_ptr<TipType>(arg->instantiate()));
+    }
+  }
 
-  return new TipFunction(
-    args,
-    std::shared_ptr<TipType>(this->getReturnValue()->instantiate()));
+  std::shared_ptr<TipType> ret;
+  if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(this->getReturnValue())) {
+    ret = std::shared_ptr<TipAlpha>(
+      new TipAlpha(alpha->getNode(), alpha->getName() + "-" + std::to_string(TipFunction::instance)));
+  } else {
+    ret = std::shared_ptr<TipType>(this->getReturnValue()->instantiate());
+  }
+
+  TipFunction* const f = new TipFunction(args, ret);
+  f->__is_instantiated = true;
+
+  TipFunction::instance++;
+
+  return f;
 }

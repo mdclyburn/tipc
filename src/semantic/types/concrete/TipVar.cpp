@@ -35,5 +35,8 @@ bool TipVar::containsFreeVariable() const {
 }
 
 TipType* TipVar::instantiate() const {
-  return new TipVar(this->node->instantiate());
+  TipVar* const t = new TipVar(this->node->instantiate());
+  t->node->setLocation(this->node->getLine(), this->node->getColumn());
+
+  return t;
 }

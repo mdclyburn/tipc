@@ -4,6 +4,7 @@
 #include "ConstraintHandler.h"
 #include "SymbolTable.h"
 #include "TipType.h"
+#include "TipFunction.h"
 #include <cstdint>
 #include <memory>
 #include <set>
@@ -35,7 +36,7 @@ public:
    * https://www.aristeia.com/EC3E/3E_item9.pdf.
    */
   TypeConstraintVisitor(SymbolTable* st,
-                        const std::set<std::string>& polys,
+                        const std::map<std::string, std::shared_ptr<TipFunction>>& polys,
                         std::unique_ptr<ConstraintHandler> handler);
 
   bool visit(ASTFunction * element) override;
@@ -57,7 +58,7 @@ public:
   void endVisit(ASTWhileStmt * element) override;
 
 protected:
-  std::set<std::string> polymorphicFunctions;
+  std::map<std::string, std::shared_ptr<TipFunction>> polymorphicFunctions;
   std::unique_ptr<ConstraintHandler> constraintHandler;
 
 private:

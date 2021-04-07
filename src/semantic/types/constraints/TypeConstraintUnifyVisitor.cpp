@@ -1,8 +1,9 @@
 #include "TypeConstraintUnifyVisitor.h"
 #include "ConstraintUnifier.h"
 
-TypeConstraintUnifyVisitor::TypeConstraintUnifyVisitor(SymbolTable *pTable,
-                                                       const std::set<std::string>& polys) :
+TypeConstraintUnifyVisitor::TypeConstraintUnifyVisitor(
+  SymbolTable *pTable,
+  const std::map<std::string, std::shared_ptr<TipFunction>>& polys) :
   TypeConstraintVisitor(pTable,
                         polys,
                         std::move(buildConstraintHandler()))

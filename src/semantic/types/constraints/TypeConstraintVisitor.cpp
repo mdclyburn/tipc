@@ -7,7 +7,7 @@
 #include "TipInt.h"
 
 TypeConstraintVisitor::TypeConstraintVisitor(SymbolTable* st,
-                                             const std::set<std::string>& polys,
+                                             const std::map<std::string, std::shared_ptr<TipFunction>>& polys,
                                              std::unique_ptr<ConstraintHandler> handler) :
   symbolTable(st),
   polymorphicFunctions(polys),
@@ -134,17 +134,42 @@ void TypeConstraintVisitor::endVisit(ASTFunAppExpr * element) {
   for(auto &a : element->getActuals()) {
     actuals.push_back(astToVar(a));
   }
+  auto func_call_type = std::make_shared<TipFunction>(actuals, astToVar(element));
 
-  ASTExpr* function = element->getFunction();
+  ASTNode* function = element->getFunction();
+  std::shared_ptr<TipType> function_type;
   if (ASTVariableExpr* const f_call_name = dynamic_cast<ASTVariableExpr*>(function)) {
-    if (polymorphicFunctions.find(f_call_name->getName()) != polymorphicFunctions.end()) {
-      std::cout << "SHOULD INST: " << f_call_name->getName() << std::endl;
+    const std::string fn_name = f_call_name->getName();
+    if (polymorphicFunctions.find(fn_name) != polymorphicFunctions.end()) {
+      std::cout << "Instantiating: " << fn_name << std::endl;
+      function_type = std::shared_ptr<TipType>(astToVar(function)->instantiate());
+
+      std::cout << "CONSTRAINT: "
+                << *function_type
+                << " == "
+                << *func_call_type << std::endl;
+
+      std::shared_ptr<TipFunction> function_type_f =
+        std::dynamic_pointer_cast<TipFunction>(function_type);
+
+      std::shared_ptr<TipFunction> inference = polymorphicFunctions.at(fn_name);
+      std::shared_ptr<TipFunction> poly_instance(static_cast<TipFunction*>(inference->instantiate()));
+      auto params = poly_instance->getParams();
+      for (int i = 0; i < params.size(); i++) {
+        std::cout << "Constraining " << *actuals[i] << " TO BE " << *params[i] << std::endl;
+        constraintHandler->handle(actuals[i], params[i]);
+      }
+      std::cout << "Constraining " << *function_type << " TO BE " << *func_call_type << std::endl;
+      constraintHandler->handle(func_call_type->getReturnValue(), poly_instance->getReturnValue());
+      return;
+    } else {
+      function_type = astToVar(function);
     }
+  } else {
+    function_type = astToVar(function);
   }
 
-  constraintHandler->handle(
-    astToVar(function),
-    std::make_shared<TipFunction>(actuals, astToVar(element)));
+  constraintHandler->handle(function_type, func_call_type);
 }
 
 /*! \brief Type constraints for heap allocation.
