@@ -13,3 +13,11 @@ std::ostream& ASTAssignStmt::print(std::ostream &out) const {
   out << *getLHS() << " = " << *getRHS() << ";";
   return out;
 }
+
+ASTNode* ASTAssignStmt::instantiate() const {
+  return new ASTAssignStmt(
+    std::unique_ptr<ASTExpr>(
+      static_cast<ASTExpr*>(this->LHS->instantiate())),
+    std::unique_ptr<ASTExpr>(
+      static_cast<ASTExpr*>(this->RHS->instantiate())));
+}

@@ -40,3 +40,9 @@ void TipAlpha::accept(TipTypeVisitor * visitor) {
 bool TipAlpha::containsFreeVariable() const {
   return true;
 }
+
+TipType* TipAlpha::instantiate() const {
+  return new TipAlpha(
+    this->node->instantiate(),
+    this->name);
+}

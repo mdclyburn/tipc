@@ -26,7 +26,8 @@ public:
    */
   virtual bool containsFreeVariable() const = 0;
 
+  virtual TipType* instantiate() const = 0;
+
 protected:
   virtual std::ostream& print(std::ostream &out) const = 0;
-
 };

@@ -62,3 +62,13 @@ void TipFunction::accept(TipTypeVisitor * visitor) {
   }
   visitor->endVisit(this);
 }
+
+TipType* TipFunction::instantiate() const {
+  std::vector<std::shared_ptr<TipType>> args;
+  for (auto arg : this->getParams())
+    args.push_back(std::shared_ptr<TipType>(arg->instantiate()));
+
+  return new TipFunction(
+    args,
+    std::shared_ptr<TipType>(this->getReturnValue()->instantiate()));
+}

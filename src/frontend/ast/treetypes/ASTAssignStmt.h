@@ -14,6 +14,7 @@ public:
   ASTExpr* getRHS() const { return RHS.get(); }
   void accept(ASTVisitor * visitor) override;
   llvm::Value* codegen() override;
+  ASTNode* instantiate() const override;
 
 protected:
   std::ostream& print(std::ostream &out) const override;

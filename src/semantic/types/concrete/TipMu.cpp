@@ -40,3 +40,10 @@ void TipMu::accept(TipTypeVisitor * visitor) {
 bool TipMu::containsFreeVariable() const {
   return t->containsFreeVariable();
 }
+
+TipType* TipMu::instantiate() const {
+  return new TipMu(
+    std::shared_ptr<TipVar>(
+      static_cast<TipVar*>(this->v->instantiate())),
+    std::shared_ptr<TipType>(this->t->instantiate()));
+}

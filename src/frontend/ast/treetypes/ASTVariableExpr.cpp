@@ -11,3 +11,6 @@ std::ostream& ASTVariableExpr::print(std::ostream &out) const {
   return out;
 }
 
+ASTNode* ASTVariableExpr::instantiate() const {
+  return new ASTVariableExpr(this->NAME);
+}

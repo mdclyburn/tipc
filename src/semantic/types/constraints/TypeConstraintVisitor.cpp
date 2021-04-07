@@ -13,6 +13,7 @@ TypeConstraintVisitor::TypeConstraintVisitor(SymbolTable* st,
   polymorphicFunctions(polys),
   constraintHandler(std::move(handler))
 {
+  polyId = 0;
 }
 
 /*! \fn astToVar
@@ -128,13 +129,22 @@ void TypeConstraintVisitor::endVisit(ASTInputExpr * element) {
  * Type Rules for "E(E1, ..., En)":
  *  [[E]] = ([[E1]], ..., [[En]]) -> [[E(E1, ..., En)]]
  */
-void TypeConstraintVisitor::endVisit(ASTFunAppExpr  * element) {
+void TypeConstraintVisitor::endVisit(ASTFunAppExpr * element) {
   std::vector<std::shared_ptr<TipType>> actuals;
   for(auto &a : element->getActuals()) {
     actuals.push_back(astToVar(a));
   }
-  constraintHandler->handle(astToVar(element->getFunction()),
-                            std::make_shared<TipFunction>(actuals, astToVar(element)));
+
+  ASTExpr* function = element->getFunction();
+  if (ASTVariableExpr* const f_call_name = dynamic_cast<ASTVariableExpr*>(function)) {
+    if (polymorphicFunctions.find(f_call_name->getName()) != polymorphicFunctions.end()) {
+      std::cout << "SHOULD INST: " << f_call_name->getName() << std::endl;
+    }
+  }
+
+  constraintHandler->handle(
+    astToVar(function),
+    std::make_shared<TipFunction>(actuals, astToVar(element)));
 }
 
 /*! \brief Type constraints for heap allocation.

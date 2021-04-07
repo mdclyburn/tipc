@@ -45,3 +45,29 @@ std::ostream& ASTFunction::print(std::ostream &out) const {
   out << ") {...}";
   return out;
 }
+
+ASTNode* ASTFunction::instantiate() const {
+  std::vector<std::unique_ptr<ASTDeclNode>> formals;
+  std::vector<std::unique_ptr<ASTDeclStmt>> decls;
+  std::vector<std::unique_ptr<ASTStmt>> body;
+
+  for (auto& formal : this->FORMALS)
+    formals.push_back(
+      std::unique_ptr<ASTDeclNode>(
+        static_cast<ASTDeclNode*>(formal->instantiate())));
+  for (auto& decl : this->DECLS)
+    decls.push_back(
+      std::unique_ptr<ASTDeclStmt>(
+        static_cast<ASTDeclStmt*>(decl->instantiate())));
+  for(auto& stmt : this->BODY)
+    body.push_back(
+      std::unique_ptr<ASTStmt>(
+        static_cast<ASTStmt*>(stmt->instantiate())));
+
+  return new ASTFunction(
+    std::unique_ptr<ASTDeclNode>(
+      static_cast<ASTDeclNode*>(this->DECL->instantiate())),
+    std::move(formals),
+    std::move(decls),
+    std::move(body));
+}

@@ -20,3 +20,13 @@ std::ostream& ASTIfStmt::print(std::ostream &out) const {
   }
   return out;
 }
+
+ASTNode* ASTIfStmt::instantiate() const {
+  return new ASTIfStmt(
+    std::unique_ptr<ASTExpr>(
+      static_cast<ASTExpr*>(this->COND->instantiate())),
+    std::unique_ptr<ASTStmt>(
+      static_cast<ASTStmt*>(this->THEN->instantiate())),
+    std::unique_ptr<ASTStmt>(
+      static_cast<ASTStmt*>(this->ELSE->instantiate()))); // <-- are you going to cause a problem later?
+}

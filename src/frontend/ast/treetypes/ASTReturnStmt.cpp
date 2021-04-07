@@ -13,3 +13,8 @@ std::ostream& ASTReturnStmt::print(std::ostream &out) const {
   return out;
 }
 
+ASTNode* ASTReturnStmt::instantiate() const {
+  return new ASTReturnStmt(
+    std::unique_ptr<ASTExpr>(
+      static_cast<ASTExpr*>(this->ARG->instantiate())));
+}

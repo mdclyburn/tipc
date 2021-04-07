@@ -33,3 +33,7 @@ void TipVar::accept(TipTypeVisitor * visitor) {
 bool TipVar::containsFreeVariable() const {
   return false;
 }
+
+TipType* TipVar::instantiate() const {
+  return new TipVar(this->node->instantiate());
+}

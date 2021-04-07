@@ -24,6 +24,8 @@ public:
 
   void accept(TipTypeVisitor *visitor) override;
 
+  TipType* instantiate() const override;
+
 protected:
   std::ostream& print(std::ostream &out) const override;
 

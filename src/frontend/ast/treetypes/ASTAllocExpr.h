@@ -10,6 +10,7 @@ public:
   ASTAllocExpr(std::unique_ptr<ASTExpr> INIT) : INIT(std::move(INIT)) {}
   ASTExpr* getInitializer() const { return INIT.get(); }
   void accept(ASTVisitor * visitor) override;
+  ASTNode* instantiate() const override;
   llvm::Value* codegen() override;
 
 protected:

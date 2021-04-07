@@ -10,3 +10,7 @@ std::ostream& ASTInputExpr::print(std::ostream &out) const {
   out << "input";
   return out;
 }
+
+ASTNode* ASTInputExpr::instantiate() const {
+  return new ASTInputExpr();
+}

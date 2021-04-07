@@ -4,6 +4,7 @@
 #include "ConstraintHandler.h"
 #include "SymbolTable.h"
 #include "TipType.h"
+#include <cstdint>
 #include <memory>
 #include <set>
 #include <stack>
@@ -60,6 +61,7 @@ protected:
   std::unique_ptr<ConstraintHandler> constraintHandler;
 
 private:
+  uint32_t polyId;
   std::stack<ASTDeclNode *> scope;
   SymbolTable *symbolTable;
   std::shared_ptr<TipType> astToVar(ASTNode * n);

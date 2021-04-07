@@ -30,3 +30,17 @@ std::ostream& ASTFunAppExpr::print(std::ostream &out) const {
   out << ")";
   return out;
 }
+
+ASTNode* ASTFunAppExpr::instantiate() const {
+  std::vector<std::unique_ptr<ASTExpr>> actuals;
+  for (auto& actual : this->ACTUALS) {
+    actuals.push_back(
+      std::unique_ptr<ASTExpr>(
+        static_cast<ASTExpr*>(actual->instantiate())));
+  }
+
+  return new ASTFunAppExpr(
+    std::unique_ptr<ASTExpr>(
+      static_cast<ASTExpr*>(this->FUN->instantiate())),
+    std::move(actuals));
+}

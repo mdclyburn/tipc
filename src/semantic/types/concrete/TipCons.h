@@ -13,18 +13,18 @@
  */
 class TipCons: public TipType {
 public:
-    TipCons() = default;
+  TipCons() = default;
 
-    const std::vector<std::shared_ptr<TipType>> &getArguments() const;
-    void setArguments(std::vector<std::shared_ptr<TipType>> &args);
-    virtual int arity() const;
-    bool doMatch(TipType const * t) const;
+  const std::vector<std::shared_ptr<TipType>> &getArguments() const;
+  void setArguments(std::vector<std::shared_ptr<TipType>> &args);
+  virtual int arity() const;
+  bool doMatch(TipType const * t) const;
 
   virtual bool containsFreeVariable() const override;
 
-    // delegate the obligation to override accept to subtypes
+  // delegate the obligation to override accept to subtypes
 
 protected:
-    TipCons(std::vector<std::shared_ptr<TipType>> arguments);
-    std::vector<std::shared_ptr<TipType>> arguments ;
+  TipCons(std::vector<std::shared_ptr<TipType>> arguments);
+  std::vector<std::shared_ptr<TipType>> arguments ;
 };

@@ -12,21 +12,23 @@
  */
 class TipVar: public TipType {
 public:
-    TipVar() = default;
-    TipVar(ASTNode * node);
+  TipVar() = default;
+  TipVar(ASTNode * node);
 
-    bool operator==(const TipType& other) const override;
-    bool operator!=(const TipType& other) const override;
+  bool operator==(const TipType& other) const override;
+  bool operator!=(const TipType& other) const override;
 
-    ASTNode* getNode() const { return node; }
+  ASTNode* getNode() const { return node; }
 
-    virtual void accept(TipTypeVisitor *visitor) override;
+  virtual void accept(TipTypeVisitor *visitor) override;
 
   virtual bool containsFreeVariable() const override;
 
-protected:
-    //! \brief Type variables printed as ASTNode@line:col
-    std::ostream& print(std::ostream &out) const override;
+  TipType* instantiate() const override;
 
-    ASTNode * node;
+protected:
+  //! \brief Type variables printed as ASTNode@line:col
+  std::ostream& print(std::ostream &out) const override;
+
+  ASTNode * node;
 };

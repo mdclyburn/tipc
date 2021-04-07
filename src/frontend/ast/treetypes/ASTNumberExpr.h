@@ -11,6 +11,7 @@ public:
   int getValue() const { return VAL; }
   void accept(ASTVisitor * visitor) override;
   llvm::Value* codegen() override;
+  ASTNode* instantiate() const override { return new ASTNumberExpr(this->VAL); }
 
 protected:
   std::ostream& print(std::ostream &out) const override;
