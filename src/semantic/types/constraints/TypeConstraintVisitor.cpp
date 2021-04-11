@@ -141,26 +141,9 @@ void TypeConstraintVisitor::endVisit(ASTFunAppExpr * element) {
   if (ASTVariableExpr* const f_call_name = dynamic_cast<ASTVariableExpr*>(function)) {
     const std::string fn_name = f_call_name->getName();
     if (polymorphicFunctions.find(fn_name) != polymorphicFunctions.end()) {
-      std::cout << "Instantiating: " << fn_name << std::endl;
-      function_type = std::shared_ptr<TipType>(astToVar(function)->instantiate());
-
-      std::cout << "CONSTRAINT: "
-                << *function_type
-                << " == "
-                << *func_call_type << std::endl;
-
-      std::shared_ptr<TipFunction> function_type_f =
-        std::dynamic_pointer_cast<TipFunction>(function_type);
-
       std::shared_ptr<TipFunction> inference = polymorphicFunctions.at(fn_name);
       std::shared_ptr<TipFunction> poly_instance(static_cast<TipFunction*>(inference->instantiate()));
-      auto params = poly_instance->getParams();
-      for (int i = 0; i < params.size(); i++) {
-        std::cout << "Constraining " << *actuals[i] << " TO BE " << *params[i] << std::endl;
-        constraintHandler->handle(actuals[i], params[i]);
-      }
-      std::cout << "Constraining " << *function_type << " TO BE " << *func_call_type << std::endl;
-      constraintHandler->handle(func_call_type->getReturnValue(), poly_instance->getReturnValue());
+      constraintHandler->handle(func_call_type, poly_instance);
       return;
     } else {
       function_type = astToVar(function);

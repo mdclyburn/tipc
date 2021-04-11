@@ -73,11 +73,16 @@ bool TipFunction::isInstantiated() const {
 }
 
 TipType* TipFunction::instantiate() const {
+  std::cout << "Instantiating function as instance "
+            << TipFunction::instance
+            << std::endl;
+
+  const std::string instance_suffix = "-" + std::to_string(TipFunction::instance);
+
   std::vector<std::shared_ptr<TipType>> args;
   for (auto arg : this->getParams()) {
     if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arg)) {
-      const std::string inst_name = alpha->getName() + "-" + std::to_string(TipFunction::instance);
-      std::cout << "Instantiated alpha to " << TipFunction::instance << std::endl;
+      const std::string inst_name = alpha->getName() + instance_suffix;
       std::shared_ptr<TipAlpha> inst_alpha(
         new TipAlpha(alpha->getNode(), inst_name));
       args.push_back(inst_alpha);
@@ -89,7 +94,7 @@ TipType* TipFunction::instantiate() const {
   std::shared_ptr<TipType> ret;
   if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(this->getReturnValue())) {
     ret = std::shared_ptr<TipAlpha>(
-      new TipAlpha(alpha->getNode(), alpha->getName() + "-" + std::to_string(TipFunction::instance)));
+      new TipAlpha(alpha->getNode(), alpha->getName() + instance_suffix));
   } else {
     ret = std::shared_ptr<TipType>(this->getReturnValue()->instantiate());
   }
