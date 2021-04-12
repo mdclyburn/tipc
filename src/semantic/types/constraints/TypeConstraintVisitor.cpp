@@ -134,25 +134,29 @@ void TypeConstraintVisitor::endVisit(ASTFunAppExpr * element) {
   for(auto &a : element->getActuals()) {
     actuals.push_back(astToVar(a));
   }
-  auto func_call_type = std::make_shared<TipFunction>(actuals, astToVar(element));
 
+  // Typing based on what's at the call site.
+  auto func_call_type = std::make_shared<TipFunction>(actuals, astToVar(element));
   ASTNode* function = element->getFunction();
-  std::shared_ptr<TipType> function_type;
+  // Called function's type.
+  std::shared_ptr<TipType> function_type = astToVar(function);
+
+  // If the called name of the function is a variable expression
+  // and the called name is designated as polymorphic, we want to
+  // instantiate the function typing instead.
   if (ASTVariableExpr* const f_call_name = dynamic_cast<ASTVariableExpr*>(function)) {
     const std::string fn_name = f_call_name->getName();
     if (polymorphicFunctions.find(fn_name) != polymorphicFunctions.end()) {
       std::shared_ptr<TipFunction> inference = polymorphicFunctions.at(fn_name);
-      std::shared_ptr<TipFunction> poly_instance(static_cast<TipFunction*>(inference->instantiate()));
-      constraintHandler->handle(func_call_type, poly_instance);
-      return;
-    } else {
-      function_type = astToVar(function);
+      function_type = std::shared_ptr<TipFunction>(
+        // Should be TipFunction since it came from polymorphicFunctions.
+        static_cast<TipFunction*>(inference->instantiate()));
     }
-  } else {
-    function_type = astToVar(function);
   }
 
   constraintHandler->handle(function_type, func_call_type);
+
+  return;
 }
 
 /*! \brief Type constraints for heap allocation.
