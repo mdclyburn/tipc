@@ -46,3 +46,8 @@ TipType* TipAlpha::instantiate() const {
     this->node->instantiate(),
     this->name);
 }
+
+void TipAlpha::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                            const std::shared_ptr<TipAlpha>& replacement) {
+  return;
+}

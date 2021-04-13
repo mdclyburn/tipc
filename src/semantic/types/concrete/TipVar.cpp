@@ -40,3 +40,8 @@ TipType* TipVar::instantiate() const {
 
   return t;
 }
+
+void TipVar::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                          const std::shared_ptr<TipAlpha>& replacement) {
+  return;
+}

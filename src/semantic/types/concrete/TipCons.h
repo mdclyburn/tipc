@@ -1,6 +1,7 @@
 #pragma once
 
 #include "TipType.h"
+#include <cstdint>
 #include <vector>
 
 /*!
@@ -21,6 +22,9 @@ public:
   bool doMatch(TipType const * t) const;
 
   virtual bool containsFreeVariable() const override;
+
+  void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                    const std::shared_ptr<TipAlpha>& replacement);
 
   // delegate the obligation to override accept to subtypes
 

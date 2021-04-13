@@ -6,6 +6,8 @@
 // Forward declare the visitor to resolve circular dependency
 class TipTypeVisitor;
 
+class TipAlpha;
+
 /*! \class TipType
  * \brief Abstract base class of all types
  *
@@ -27,6 +29,9 @@ public:
   virtual bool containsFreeVariable() const = 0;
 
   virtual TipType* instantiate() const = 0;
+
+  virtual void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                            const std::shared_ptr<TipAlpha>& replacement) = 0;
 
 protected:
   virtual std::ostream& print(std::ostream &out) const = 0;

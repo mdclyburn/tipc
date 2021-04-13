@@ -26,6 +26,9 @@ public:
 
   TipType* instantiate() const override;
 
+  void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                    const std::shared_ptr<TipAlpha>& replacement);
+
 protected:
   //! \brief Type variables printed as ASTNode@line:col
   std::ostream& print(std::ostream &out) const override;

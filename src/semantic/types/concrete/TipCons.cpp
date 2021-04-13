@@ -50,3 +50,18 @@ bool TipCons::containsFreeVariable() const {
 
   return false;
 }
+
+void TipCons::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                  const std::shared_ptr<TipAlpha>& replacement) {
+  for (uint32_t i = 0; i < this->arguments.size(); i++) {
+    if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arguments[i])) {
+      if (alpha == original) {
+        arguments[i] = replacement;
+      }
+    } else {
+      arguments[i]->replaceAlpha(original, replacement);
+    }
+  }
+
+  return;
+}

@@ -47,3 +47,10 @@ TipType* TipMu::instantiate() const {
       static_cast<TipVar*>(this->v->instantiate())),
     std::shared_ptr<TipType>(this->t->instantiate()));
 }
+
+void TipMu::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                         const std::shared_ptr<TipAlpha>& replacement) {
+  this->t->replaceAlpha(original, replacement);
+
+  return;
+}
