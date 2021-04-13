@@ -1,5 +1,6 @@
 #include "TipFunction.h"
 #include "TipTypeVisitor.h"
+#include <algorithm>
 #include <map>
 #include <sstream>
 
@@ -96,9 +97,20 @@ TipType* TipFunction::instantiate() const {
   for (auto arg : this->getParams()) {
     // Capture any new alphas.
     std::vector<std::shared_ptr<TipAlpha>> arg_alphas;
-    arg->populateAlphas(arg_alphas);
+    // Catch plain alphas themselves.
+    if (auto alpha_arg = std::dynamic_pointer_cast<TipAlpha>(arg)) {
+      arg_alphas.push_back(alpha_arg);
+    } else {
+      arg->populateAlphas(arg_alphas);
+    }
+
+    std::cout << "Found " << arg_alphas.size() << " alphas in " << *arg << std::endl;
     for (auto arg_alpha : arg_alphas) {
-      if (replacement_alphas.find(arg_alpha) == replacement_alphas.end()) {
+      auto find_res = std::find_if(
+        replacement_alphas.begin(),
+        replacement_alphas.end(),
+        [arg_alpha](const auto a) { return *a.first == *arg_alpha; });
+      if (find_res == replacement_alphas.end()) {
         const std::string inst_name = arg_alpha->getName() + instance_suffix;
         auto repl_alpha = std::shared_ptr<TipAlpha>(
           new TipAlpha(arg_alpha->getNode(), inst_name));
@@ -108,13 +120,18 @@ TipType* TipFunction::instantiate() const {
                   << *arg_alpha << " -> " << *repl_alpha
                   << std::endl;
         replacement_alphas[arg_alpha] = repl_alpha;
+        std::cout << "Added replacement alpha: " << arg_alpha << " -> " << repl_alpha << std::endl
+                  << std::flush;
       }
     }
 
     // Directly replace alpha with its replacement.
     // Let other types recursively replace their alphas.
     if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arg)) {
-      args.push_back(replacement_alphas[alpha]);
+      args.push_back((*std::find_if(
+                       replacement_alphas.begin(),
+                       replacement_alphas.end(),
+                       [alpha] (const auto a) { return *a.first == *alpha; })).second);
     } else {
       auto arg_instance = std::shared_ptr<TipType>(arg->instantiate());
       args.push_back(arg_instance);

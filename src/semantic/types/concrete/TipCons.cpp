@@ -52,8 +52,9 @@ bool TipCons::containsFreeVariable() const {
 }
 
 void TipCons::populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas) {
-  std::cout << "Cons populating alphas..." << std::endl;
+  std::cout << "TipCons: populating alphas..." << std::endl;
   for (auto arg : this->arguments) {
+    std::cout << "Inspecting arg: " << arg << std::endl;
     if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arg)) {
       std::cout << "  found alpha " << *alpha << " (" << alpha << ")" << std::endl;
       alphas.push_back(alpha);
