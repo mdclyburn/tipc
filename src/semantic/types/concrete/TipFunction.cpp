@@ -75,37 +75,28 @@ bool TipFunction::isInstantiated() const {
 }
 
 TipType* TipFunction::instantiate() const {
-  std::cout << "Instantiating function as instance "
-            << TipFunction::instance
-            << std::endl;
-
-  for (auto arg : this->getParams()) {
-    std::cout << "Param: ";
-    if (auto ref = std::dynamic_pointer_cast<TipRef>(arg)) {
-      std::cout << "ref " << ref << " -> " << ref->getAddressOfField() << std::endl;
-    } else {
-      std::cout << arg << std::endl;
-    }
-  }
-  std::cout << "Return: " << this->getReturnValue() << std::endl;
-
   const std::string instance_suffix = "-" + std::to_string(TipFunction::instance);
 
+  // Arguments type variables for the instantiation.
   std::vector<std::shared_ptr<TipType>> args;
-  // Map from old alphas to new alphas.
+  // Map from old alphas to new alphas specific to this instantiation.
   std::map<std::shared_ptr<TipAlpha>, std::shared_ptr<TipAlpha>> replacement_alphas;
+
+  // Recreate parameters for the function.
   for (auto arg : this->getParams()) {
-    // Capture any new alphas.
+    // Find all alphas that will need to be handled specially.
     std::vector<std::shared_ptr<TipAlpha>> arg_alphas;
-    // Catch plain alphas themselves.
     if (auto alpha_arg = std::dynamic_pointer_cast<TipAlpha>(arg)) {
       arg_alphas.push_back(alpha_arg);
     } else {
       arg->populateAlphas(arg_alphas);
     }
 
-    std::cout << "Found " << arg_alphas.size() << " alphas in " << *arg << std::endl;
+    // Instantiate alphas and add them to replacement_alphas so they can
+    // be re-used in parameters that have the same alpha.
     for (auto arg_alpha : arg_alphas) {
+      // TODO: need a better way of accessing and finding alpha variables.
+      // Pointers do not match, but using TipAlpha::operator== does.
       auto find_res = std::find_if(
         replacement_alphas.begin(),
         replacement_alphas.end(),
@@ -114,14 +105,7 @@ TipType* TipFunction::instantiate() const {
         const std::string inst_name = arg_alpha->getName() + instance_suffix;
         auto repl_alpha = std::shared_ptr<TipAlpha>(
           new TipAlpha(arg_alpha->getNode(), inst_name));
-        std::cout << "Replacement alpha: "
-                  << arg_alpha << " -> " << repl_alpha
-                  << " :: "
-                  << *arg_alpha << " -> " << *repl_alpha
-                  << std::endl;
         replacement_alphas[arg_alpha] = repl_alpha;
-        std::cout << "Added replacement alpha: " << arg_alpha << " -> " << repl_alpha << std::endl
-                  << std::flush;
       }
     }
 
@@ -145,29 +129,18 @@ TipType* TipFunction::instantiate() const {
   std::shared_ptr<TipType> ret;
   if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(this->getReturnValue())) {
     std::shared_ptr<TipAlpha> match;
+    // TODO: could use a better strategy for getting the match.
+    // This would be fixed by a better way to index into the map.
     for (auto kv : replacement_alphas) {
       if (*alpha == *kv.first) {
-        std::cout << "Found match for return: "
-                  << alpha << " (" << *alpha << ") "
-                  << " and " << kv.first << " (" << *kv.first << ")" << std::endl;
         match = kv.second;
         break;
       }
     }
-    assert(match != nullptr);
 
-    std::cout << "Return of function is direct alpha." << std::endl;
-    std::cout << "  replace: " << alpha << " -> " << match
-              << " :: "
-              << *alpha << " -> " << *match
-              << std::endl;
-    // std::cout << "Return refers to same: "
-    //           << (*alpha == *(std::static_pointer_cast<TipRef>(this->getParams().back())->getAddressOfField())) << std::endl;
-
+    assert(match != nullptr); // Gross...
     ret = match;
   } else {
-    std::cout << "Return of function is not direct alpha. "
-              << "Instantiating and using replaceAlpha." << std::endl;
     ret = std::shared_ptr<TipType>(this->getReturnValue()->instantiate());
     for (auto kv : replacement_alphas) {
       ret->replaceAlpha(kv.first, kv.second);
@@ -175,11 +148,9 @@ TipType* TipFunction::instantiate() const {
   }
 
   TipFunction* const f = new TipFunction(args, ret);
-  f->__is_instantiated = true;
+  f->__is_instantiated = true; // <- Is this used in some way?
 
   TipFunction::instance++;
-
-  std::cout << "Instantiation: " << *f << std::endl;
 
   return f;
 }

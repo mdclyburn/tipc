@@ -52,14 +52,10 @@ bool TipCons::containsFreeVariable() const {
 }
 
 void TipCons::populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas) {
-  std::cout << "TipCons: populating alphas..." << std::endl;
   for (auto arg : this->arguments) {
-    std::cout << "Inspecting arg: " << arg << std::endl;
     if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arg)) {
-      std::cout << "  found alpha " << *alpha << " (" << alpha << ")" << std::endl;
       alphas.push_back(alpha);
     } else {
-      std::cout << "  recursing to populate alphas..." << std::endl;
       arg->populateAlphas(alphas);
     }
   }
@@ -69,25 +65,13 @@ void TipCons::populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas) {
 
 void TipCons::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
                   const std::shared_ptr<TipAlpha>& replacement) {
-  std::cout << "TipCons: replaceAlpha "
-            << original << " (" << *original << ") "
-            << "with " << replacement << " (" << *replacement << ")"
-            << std::endl;
-
   for (uint32_t i = 0; i < this->arguments.size(); i++) {
     if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arguments[i])) {
+      // Replace based on name alone.
       if (alpha->getName().compare(original->getName()) == 0) {
-        std::cout << "TipCons: replacing " << *alpha << " with " << *replacement << std::endl;
         arguments[i] = replacement;
-      } else {
-        std::cout << "TipCons: no match: "
-                  << *alpha
-                  << " =/= "
-                  << *original
-                  << std::endl;
       }
     } else {
-      std::cout << "TipCons: recursing for replacement." << std::endl;
       arguments[i]->replaceAlpha(original, replacement);
     }
   }
