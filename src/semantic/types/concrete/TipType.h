@@ -2,6 +2,7 @@
 
 #include <ostream>
 #include <memory>
+#include <vector>
 
 // Forward declare the visitor to resolve circular dependency
 class TipTypeVisitor;
@@ -29,6 +30,8 @@ public:
   virtual bool containsFreeVariable() const = 0;
 
   virtual TipType* instantiate() const = 0;
+
+  virtual void populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas) { return; }
 
   virtual void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
                             const std::shared_ptr<TipAlpha>& replacement) = 0;

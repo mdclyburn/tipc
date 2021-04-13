@@ -36,8 +36,8 @@ public:
 
   TipType* instantiate() const override;
 
-  virtual void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
-                            const std::shared_ptr<TipAlpha>& replacement);
+  void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                    const std::shared_ptr<TipAlpha>& replacement);
 
 protected:
   std::ostream& print(std::ostream &out) const override;

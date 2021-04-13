@@ -54,3 +54,8 @@ void TipMu::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
 
   return;
 }
+
+void TipMu::populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas) {
+  this->t->populateAlphas(alphas);
+  return;
+}

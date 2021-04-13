@@ -26,6 +26,8 @@ public:
 
   TipType* instantiate() const override;
 
+  void populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas);
+
   virtual void replaceAlpha(const std::shared_ptr<TipAlpha>& original,
                             const std::shared_ptr<TipAlpha>& replacement);
 
