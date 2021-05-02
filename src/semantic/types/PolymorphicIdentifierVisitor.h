@@ -34,9 +34,13 @@ public:
    */
   const std::set<std::string>& polymorphicFunctions() const;
 
+  /** Returns all isolated type inferences for functions.
+   */
   const std::map<std::string, std::shared_ptr<TipFunction>>&
   inferences();
 
+  /** Returns isolated type inferences for functions that are candidates for polymorphism.
+   */
   std::map<std::string, std::shared_ptr<TipFunction>>
   polymorphicInferences();
 
