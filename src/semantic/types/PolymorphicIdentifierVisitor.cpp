@@ -90,3 +90,15 @@ const std::map<std::string, std::shared_ptr<TipFunction>>&
 PolymorphicIdentifierVisitor::inferences() {
    return this->_inferences;
 }
+
+std::map<std::string, std::shared_ptr<TipFunction>>
+PolymorphicIdentifierVisitor::polymorphicInferences() {
+  std::map<std::string, std::shared_ptr<TipFunction>> polys;
+  for (auto it = this->_inferences.begin(); it != this->_inferences.end(); it++) {
+    if (this->_polymorphic_fns.find(it->first) != this->_polymorphic_fns.end()) {
+      polys.insert({it->first, it->second});
+    }
+  }
+
+  return polys;
+}

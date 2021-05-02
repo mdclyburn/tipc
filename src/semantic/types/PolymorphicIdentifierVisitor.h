@@ -37,6 +37,9 @@ public:
   const std::map<std::string, std::shared_ptr<TipFunction>>&
   inferences();
 
+  std::map<std::string, std::shared_ptr<TipFunction>>
+  polymorphicInferences();
+
 private:
   SymbolTable* const _symbol_table;
   // Function currently inspected during AST traversal.
