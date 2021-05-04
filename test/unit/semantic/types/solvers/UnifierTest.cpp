@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 #include <Unifier.h>
-
+/*
 TEST_CASE("Unifier: Collect and then unify constraints", "[Unifier, Collect]") {
 
     SECTION("Test type-safe program 1") {
@@ -409,4 +409,4 @@ TEST_CASE("Unifier: Test closing mu ", "[Unifier]") {
     ss << *closed;
 
     REQUIRE_NOTHROW(ss.str() == "\u03bc\u03B1<f>.(\u03B1<f>,int) -> int");
-}
+}*/

@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <map>
 #include <sstream>
+#include <iostream>
 
 uint32_t TipFunction::instance = 1;
 
@@ -83,7 +84,29 @@ TipType* TipFunction::instantiate() const {
   std::map<std::shared_ptr<TipAlpha>, std::shared_ptr<TipAlpha>> replacement_alphas;
 
   // Recreate parameters for the function.
-  for (auto arg : this->getParams()) {
+  std::vector<std::shared_ptr<TipAlpha>> ret_alphas; 
+
+  if (auto alpha_arg = std::dynamic_pointer_cast<TipAlpha>(this->getReturnValue())) {
+    ret_alphas.push_back(alpha_arg);
+  } else {
+    this->getReturnValue()->populateAlphas(ret_alphas);
+  }
+  // loop -> canonical replacements
+  for (auto arg_alpha : ret_alphas) { // rename
+    auto find_res = std::find_if(
+      replacement_alphas.begin(),
+      replacement_alphas.end(),
+      [arg_alpha](const auto a) { return *a.first == *arg_alpha; });
+    if (find_res == replacement_alphas.end()) {
+      const std::string inst_name = arg_alpha->getName() + instance_suffix;
+      auto repl_alpha = std::shared_ptr<TipAlpha>(
+        new TipAlpha(arg_alpha->getNode(), inst_name));
+      replacement_alphas[arg_alpha] = repl_alpha;
+      std::cout << "test \n";
+    }
+  }
+
+  for (auto arg : this->getParams()) {  // 
     // Find all alphas that will need to be handled specially.
     std::vector<std::shared_ptr<TipAlpha>> arg_alphas;
     if (auto alpha_arg = std::dynamic_pointer_cast<TipAlpha>(arg)) {

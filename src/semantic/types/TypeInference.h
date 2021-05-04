@@ -29,7 +29,7 @@ public:
    * \param ast The program AST
    * \param symbols The symbol table
    */
-  static std::unique_ptr<TypeInference> check(ASTProgram* ast, SymbolTable* symbols); 
+  static std::unique_ptr<TypeInference> check(ASTProgram* ast, SymbolTable* symbols, bool dirrec); 
 
   /*! \fn getInferredType
    *  \brief Returns the type expression inferred for the given ASTDeclNode.

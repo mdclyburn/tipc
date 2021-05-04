@@ -23,7 +23,7 @@ public:
    *
    * \param syms Symbol table for the program under analysis.
    */
-  explicit PolymorphicIdentifierVisitor(SymbolTable* const syms);
+  explicit PolymorphicIdentifierVisitor(SymbolTable* const syms, bool dirrec);
 
   bool visit(ASTFunction* element) override;
   bool visit(ASTFunAppExpr* element) override;
@@ -49,6 +49,7 @@ private:
   // Function currently inspected during AST traversal.
   std::optional<ASTFunction*> _current_fn;
   bool _fn_calls_fns;
+  bool _dirrec_flag;
   // Names of functions identified as polymorphic.
   std::set<std::string> _polymorphic_fns;
   // Type inferences of polymorphic functions.

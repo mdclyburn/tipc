@@ -3,12 +3,12 @@
 #include "CheckAssignable.h"
 #include "TypeInference.h"
 
-std::unique_ptr<SemanticAnalysis> SemanticAnalysis::analyze(ASTProgram* ast) {
+std::unique_ptr<SemanticAnalysis> SemanticAnalysis::analyze(ASTProgram* ast, bool dirrec) {
   auto symTable = SymbolTable::build(ast);
 
   CheckAssignable::check(ast);
 
-  auto typeResults = TypeInference::check(ast, symTable.get());
+  auto typeResults = TypeInference::check(ast, symTable.get(), dirrec);
 
   return std::make_unique<SemanticAnalysis>(std::move(symTable), std::move(typeResults));
 }

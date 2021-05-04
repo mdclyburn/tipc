@@ -24,7 +24,7 @@ nonpoly(a) {
     auto ast = ASTHelper::build_ast(program);
     auto symbols = SymbolTable::build(ast.get());
 
-    PolymorphicIdentifierVisitor visitor(symbols.get());
+    PolymorphicIdentifierVisitor visitor(symbols.get(), false);
     ast->accept(&visitor);
 
     REQUIRE(visitor.polymorphicFunctions().count("poly") == 1);
@@ -48,7 +48,7 @@ poly_no_rec(a) {
     auto ast = ASTHelper::build_ast(program);
     auto symbols = SymbolTable::build(ast.get());
 
-    PolymorphicIdentifierVisitor visitor(symbols.get());
+    PolymorphicIdentifierVisitor visitor(symbols.get(), false);
     ast->accept(&visitor);
     
     REQUIRE(visitor.polymorphicFunctions().count("poly_rec") == 0);

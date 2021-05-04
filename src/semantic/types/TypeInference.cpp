@@ -10,9 +10,9 @@
  * unifier instance.  The unifier then records the inferred type results that
  * can be subsequently queried.
  */
-std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable* symbols) {
+std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable* symbols, bool dirrec) {
   // Identify polymorphic functions.
-  PolymorphicIdentifierVisitor f_visitor(symbols);
+  PolymorphicIdentifierVisitor f_visitor(symbols, dirrec);
   ast->accept(&f_visitor);
 
   const auto& inferences = f_visitor.inferences();

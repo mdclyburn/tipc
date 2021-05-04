@@ -22,6 +22,8 @@ static cl::opt<bool> debug("verbose", cl::desc("enable log messages"), cl::cat(T
 static cl::opt<bool> emitHrAsm("asm",
                            cl::desc("emit human-readable LLVM assembly language instead of LLVM Bitcode"),
                            cl::cat(TIPcat));
+static cl::opt<bool> dirrec("dr", cl::desc("only refuse instantiation for directly recursive polymorphs"), 
+							cl::cat(TIPcat));
 static cl::opt<std::string> logfile("log",
                                    cl::value_desc("logfile"),
                                    cl::desc("log all messages to logfile (enables --verbose)"),
@@ -30,6 +32,7 @@ static cl::opt<std::string> sourceFile(cl::Positional,
                                        cl::desc("<tip source file>"),
                                        cl::Required,
                                        cl::cat(TIPcat));
+
 
 /*! \brief tipc driver.
  * 
@@ -75,7 +78,7 @@ int main(int argc, char *argv[]) {
     auto ast = FrontEnd::parse(stream);
 
     try {
-      auto analysisResults = SemanticAnalysis::analyze(ast.get());
+      auto analysisResults = SemanticAnalysis::analyze(ast.get(), dirrec);
 
       if (ppretty) {
         FrontEnd::prettyprint(ast.get(), std::cout);

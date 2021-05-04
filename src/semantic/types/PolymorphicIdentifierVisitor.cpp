@@ -8,16 +8,16 @@
 #include "TypeInference.h"
 #include "Unifier.h"
 
-PolymorphicIdentifierVisitor::PolymorphicIdentifierVisitor(SymbolTable* const syms) :
+PolymorphicIdentifierVisitor::PolymorphicIdentifierVisitor(SymbolTable* const syms, bool dirrec) :
   ASTVisitor(),
   _symbol_table(syms)
 {
+  _dirrec_flag = dirrec;
   _fn_calls_fns = false;
 }
 
 bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
 {
-  bool flag = false;
   const std::string function_name = element->getName();
   // Skip any function named main.
   if (function_name.compare("main") == 0) {
@@ -54,14 +54,6 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
             << *inferred_type << std::endl;
 
   if (inferred_type->containsFreeVariable()) {
-    if (flag) {
-      // Do the basic "contains a self-call" check
-      auto called_funcs = CalleeIdentifier::build(element);
-      if (std::find(called_funcs.begin(), called_funcs.end(), function_name) == called_funcs.end()) {
-        _polymorphic_fns.emplace(function_name);
-        return false;
-      }
-    }
     // We want to look for function calls in this function.
     _current_fn = element;
     _fn_calls_fns = false;
@@ -84,7 +76,10 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunAppExpr* element)
 void PolymorphicIdentifierVisitor::endVisit(ASTFunction* element)
 {
   const std::string function_name = element->getName();
+  auto called_funcs = CalleeIdentifier::build(element);
   if (_current_fn.has_value() && !_fn_calls_fns) {
+    _polymorphic_fns.emplace(function_name);
+  } else if (_dirrec_flag && std::find(called_funcs.begin(), called_funcs.end(), function_name) == called_funcs.end()) {
     _polymorphic_fns.emplace(function_name);
   }
 
