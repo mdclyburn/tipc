@@ -23,3 +23,13 @@ std::ostream& ASTBlockStmt::print(std::ostream &out) const {
   out << "}";
   return out;
 }
+
+ASTNode* ASTBlockStmt::instantiate() const {
+  std::vector<std::unique_ptr<ASTStmt>> statements;
+  for (auto& stmt : this->STMTS) {
+    statements.push_back(
+        std::unique_ptr<ASTStmt>(static_cast<ASTStmt*>(stmt->instantiate())));
+  }
+
+  return new ASTBlockStmt(std::move(statements));
+}

@@ -10,3 +10,7 @@ std::ostream& ASTDeclNode::print(std::ostream &out) const {
   out << getName();
   return out;
 }
+
+ASTNode* ASTDeclNode::instantiate() const {
+  return new ASTDeclNode(this->NAME);
+}

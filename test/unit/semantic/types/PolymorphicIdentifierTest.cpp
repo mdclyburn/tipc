@@ -8,8 +8,12 @@
 
 TEST_CASE("PolymorphicIdentifierVisitor: poly function id", "[PolymorphicIdentifierVisitor]") {
 	std::stringstream program;
-    program << R"(poly(a, b) {
+    program << R"(recpoly(a, b) {
  return a(b);
+}
+
+poly(a, b) {
+  return a == b;
 }
 
 nonpoly(a) {
@@ -22,8 +26,9 @@ nonpoly(a) {
 
     PolymorphicIdentifierVisitor visitor(symbols.get());
     ast->accept(&visitor);
-    
+
     REQUIRE(visitor.polymorphicFunctions().count("poly") == 1);
+    REQUIRE(visitor.polymorphicFunctions().count("recpoly") == 0);
     REQUIRE(visitor.polymorphicFunctions().count("nonpoly") == 0);
 }
 

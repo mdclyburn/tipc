@@ -21,7 +21,7 @@ std::ostream& TipRecord::print(std::ostream &out) const {
     return out;
 }
 
-// This does not obey the semantics of alpha init values 
+// This does not obey the semantics of alpha init values
 bool TipRecord::operator==(const TipType &other) const {
     auto tipRecord = dynamic_cast<const TipRecord *>(&other);
     if(!tipRecord) {
@@ -61,4 +61,20 @@ void TipRecord::accept(TipTypeVisitor * visitor) {
     }
   }
   visitor->endVisit(this);
+}
+
+TipType* TipRecord::instantiate() const {
+  std::vector<std::shared_ptr<TipType>> inits;
+  std::vector<std::string> names;
+
+  for (auto& init : this->arguments) {
+    inits.push_back(
+      std::shared_ptr<TipType>(init->instantiate()));
+  }
+
+  for (auto& name : names) {
+    names.push_back(std::string(name));
+  }
+
+  return new TipRecord(inits, names);
 }

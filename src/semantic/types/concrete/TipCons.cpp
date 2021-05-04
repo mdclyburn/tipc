@@ -50,3 +50,31 @@ bool TipCons::containsFreeVariable() const {
 
   return false;
 }
+
+void TipCons::populateAlphas(std::vector<std::shared_ptr<TipAlpha>>& alphas) {
+  for (auto arg : this->arguments) {
+    if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arg)) {
+      alphas.push_back(alpha);
+    } else {
+      arg->populateAlphas(alphas);
+    }
+  }
+
+  return;
+}
+
+void TipCons::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                  const std::shared_ptr<TipAlpha>& replacement) {
+  for (uint32_t i = 0; i < this->arguments.size(); i++) {
+    if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(arguments[i])) {
+      // Replace based on name alone.
+      if (alpha->getName().compare(original->getName()) == 0) {
+        arguments[i] = replacement;
+      }
+    } else {
+      arguments[i]->replaceAlpha(original, replacement);
+    }
+  }
+
+  return;
+}

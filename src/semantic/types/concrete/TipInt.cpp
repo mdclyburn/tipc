@@ -27,3 +27,7 @@ void TipInt::accept(TipTypeVisitor * visitor) {
   visitor->visit(this);
   visitor->endVisit(this);
 }
+
+TipType* TipInt::instantiate() const {
+  return new TipInt();
+}

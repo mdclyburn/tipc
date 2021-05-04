@@ -11,8 +11,10 @@
  */
 class TypeConstraintUnifyVisitor: public TypeConstraintVisitor {
 public:
-    explicit TypeConstraintUnifyVisitor(SymbolTable *pTable);
+  explicit TypeConstraintUnifyVisitor(
+    SymbolTable *pTable,
+    const std::map<std::string, std::shared_ptr<TipFunction>>& polys);
+
 private:
     static std::unique_ptr<ConstraintHandler> buildConstraintHandler();
 };
-

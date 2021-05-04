@@ -4,6 +4,8 @@
 #include "ConstraintHandler.h"
 #include "SymbolTable.h"
 #include "TipType.h"
+#include "TipFunction.h"
+#include <cstdint>
 #include <memory>
 #include <set>
 #include <stack>
@@ -21,44 +23,47 @@
  */
 class TypeConstraintVisitor: public ASTVisitor {
 public:
-    TypeConstraintVisitor() = delete;
+  TypeConstraintVisitor() = delete;
 
-    /**
-     * Construct a TypeConstraintVisitor from the given SymbolTable and ConstraintHandler.
-     *
-     * Subclasses define the handler (eg. TypeConstraintUnifyVisitor defines the ConstraintUnfier
-     * as its handler) and pass it up to the base class during construction. This allows us to
-     * not call virtual methods in the constructor.
-     *
-     * Scott Meyers defines this pattern in his Effective C++ series. You can read more about it here,
-     * https://www.aristeia.com/EC3E/3E_item9.pdf.
-     */
-    TypeConstraintVisitor(SymbolTable* st, std::unique_ptr<ConstraintHandler> handler);
+  /**
+   * Construct a TypeConstraintVisitor from the given SymbolTable and ConstraintHandler.
+   *
+   * Subclasses define the handler (eg. TypeConstraintUnifyVisitor defines the ConstraintUnfier
+   * as its handler) and pass it up to the base class during construction. This allows us to
+   * not call virtual methods in the constructor.
+   *
+   * Scott Meyers defines this pattern in his Effective C++ series. You can read more about it here,
+   * https://www.aristeia.com/EC3E/3E_item9.pdf.
+   */
+  TypeConstraintVisitor(SymbolTable* st,
+                        const std::map<std::string, std::shared_ptr<TipFunction>>& polys,
+                        std::unique_ptr<ConstraintHandler> handler);
 
-    bool visit(ASTFunction * element) override;
-    void endVisit(ASTAccessExpr * element) override;
-    void endVisit(ASTAllocExpr * element) override;
-    void endVisit(ASTAssignStmt * element) override;
-    void endVisit(ASTBinaryExpr * element) override;
-    void endVisit(ASTDeRefExpr * element) override;
-    void endVisit(ASTErrorStmt * element) override;
-    void endVisit(ASTFunAppExpr * element) override;
-    void endVisit(ASTFunction * element) override;
-    void endVisit(ASTIfStmt * element) override;
-    void endVisit(ASTInputExpr * element) override;
-    void endVisit(ASTNullExpr * element) override;
-    void endVisit(ASTNumberExpr * element) override;
-    void endVisit(ASTOutputStmt * element) override;
-    void endVisit(ASTRecordExpr * element) override;
-    void endVisit(ASTRefExpr * element) override;
-    void endVisit(ASTWhileStmt * element) override;
+  bool visit(ASTFunction * element) override;
+  void endVisit(ASTAccessExpr * element) override;
+  void endVisit(ASTAllocExpr * element) override;
+  void endVisit(ASTAssignStmt * element) override;
+  void endVisit(ASTBinaryExpr * element) override;
+  void endVisit(ASTDeRefExpr * element) override;
+  void endVisit(ASTErrorStmt * element) override;
+  void endVisit(ASTFunAppExpr * element) override;
+  void endVisit(ASTFunction * element) override;
+  void endVisit(ASTIfStmt * element) override;
+  void endVisit(ASTInputExpr * element) override;
+  void endVisit(ASTNullExpr * element) override;
+  void endVisit(ASTNumberExpr * element) override;
+  void endVisit(ASTOutputStmt * element) override;
+  void endVisit(ASTRecordExpr * element) override;
+  void endVisit(ASTRefExpr * element) override;
+  void endVisit(ASTWhileStmt * element) override;
 
 protected:
-    std::unique_ptr<ConstraintHandler> constraintHandler;
+  std::map<std::string, std::shared_ptr<TipFunction>> polymorphicFunctions;
+  std::unique_ptr<ConstraintHandler> constraintHandler;
 
 private:
-    std::stack<ASTDeclNode *> scope;
-    SymbolTable *symbolTable;
-    std::shared_ptr<TipType> astToVar(ASTNode * n);
+  uint32_t polyId;
+  std::stack<ASTDeclNode *> scope;
+  SymbolTable *symbolTable;
+  std::shared_ptr<TipType> astToVar(ASTNode * n);
 };
-

@@ -35,3 +35,7 @@ void TipRef::accept(TipTypeVisitor * visitor) {
   }
   visitor->endVisit(this);
 }
+
+TipType* TipRef::instantiate() const {
+  return new TipRef(std::shared_ptr<TipType>(this->arguments[0]->instantiate()));
+}

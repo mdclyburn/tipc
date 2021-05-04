@@ -18,7 +18,7 @@
  * We really need to use the underlying notion of equality on TipType to
  * perform the operations below and when using smart pointers we end up
  * having to do things explicitly while accessing and dereferencing the
- * managed pointer. 
+ * managed pointer.
  */
 
 namespace { // Anonymous namespace for local helper functions
@@ -26,7 +26,7 @@ namespace { // Anonymous namespace for local helper functions
 bool contains(std::set<std::shared_ptr<TipVar>> s, std::shared_ptr<TipVar> t) {
   for (auto e : s) {
     if (*e.get() == *t.get()) return true;
-  } 
+  }
   return false;
 }
 
@@ -34,7 +34,7 @@ std::string print(std::set<std::shared_ptr<TipVar>> varSet) {
   std::stringstream s;
   s << "{ ";
   for (auto v : varSet) {
-    s << *v << " "; 
+    s << *v << " ";
   }
   s << "}";
   return s.str();
@@ -93,6 +93,7 @@ void Unifier::solve() {
  */
 void Unifier::unify(std::shared_ptr<TipType> t1, std::shared_ptr<TipType> t2) {
     LOG_S(1) << "Unifying " << *t1 << " and " << *t2;
+    // std::cout << *t1 << " == " << *t2 << std::endl;
 
     auto rep1 = unionFind->find(t1);
     auto rep2 = unionFind->find(t2);
@@ -176,7 +177,7 @@ std::shared_ptr<TipType> Unifier::close(
 
       LOG_S(1) << "Close making " << *alpha << " to end var " << *v;
       return alpha;
-    } 
+    }
 
   } else if (isCons(type)) {
     auto c = std::dynamic_pointer_cast<TipCons>(type);
@@ -219,7 +220,7 @@ std::shared_ptr<TipType> Unifier::close(
     LOG_S(1) << "Close making " << *closedMu << " to end mu " << *m;
 
     return closedMu;
-  } 
+  }
 
   return type;
 }
@@ -231,7 +232,7 @@ std::shared_ptr<TipType> Unifier::close(
  * their base types.  Because the close() function may destructively update
  * the unionFind structure, by generating new types, we save a copy
  * and restore it after closing.
- */ 
+ */
 std::shared_ptr<TipType> Unifier::inferred(std::shared_ptr<TipType> v) {
   auto unionFindCopy = unionFind->copy();
   std::set<std::shared_ptr<TipVar>> visited;
@@ -267,4 +268,3 @@ bool Unifier::isMu(std::shared_ptr<TipType> type) {
 bool Unifier::isAlpha(std::shared_ptr<TipType> type) {
     return std::dynamic_pointer_cast<TipAlpha>(type) != nullptr;
 }
-

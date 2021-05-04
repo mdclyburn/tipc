@@ -12,3 +12,10 @@ std::ostream& ASTAccessExpr::print(std::ostream &out) const {
   out << "(" << *getRecord() << "." << getField() << ")";
   return out;
 }
+
+ASTNode* ASTAccessExpr::instantiate() const {
+  return new ASTAccessExpr(
+    std::unique_ptr<ASTExpr>(
+      static_cast<ASTExpr*>(this->RECORD->instantiate())),
+    this->FIELD);
+}

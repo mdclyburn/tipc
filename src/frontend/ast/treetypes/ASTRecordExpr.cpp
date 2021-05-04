@@ -23,10 +23,20 @@ std::ostream& ASTRecordExpr::print(std::ostream &out) const {
       skip = false;
       out << *f;
       continue;
-    } 
+    }
     out << "," << *f;
-  } 
+  }
   out << "}";
   return out;
 }
 
+ASTNode* ASTRecordExpr::instantiate() const {
+  std::vector<std::unique_ptr<ASTFieldExpr>> fields;
+  for (auto& field : this->FIELDS) {
+    fields.push_back(
+      std::unique_ptr<ASTFieldExpr>(
+        static_cast<ASTFieldExpr*>(field->instantiate())));
+  }
+
+  return new ASTRecordExpr(std::move(fields));
+}

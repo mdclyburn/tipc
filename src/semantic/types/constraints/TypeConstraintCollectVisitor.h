@@ -4,6 +4,7 @@
 #include "ConstraintHandler.h"
 #include "SymbolTable.h"
 #include "TipType.h"
+#include "TipFunction.h"
 #include <memory>
 #include <set>
 #include <stack>
@@ -18,9 +19,11 @@
  */
 class TypeConstraintCollectVisitor: public TypeConstraintVisitor {
 public:
-    explicit TypeConstraintCollectVisitor(SymbolTable *pTable);
-    std::vector<TypeConstraint>& getCollectedConstraints();
-private:
-    static std::unique_ptr<ConstraintHandler> buildConstraintHandler();
-};
+  explicit TypeConstraintCollectVisitor(SymbolTable *pTable,
+                                        const std::map<std::string, std::shared_ptr<TipFunction>>& polys);
 
+  std::vector<TypeConstraint>& getCollectedConstraints();
+
+private:
+  static std::unique_ptr<ConstraintHandler> buildConstraintHandler();
+};

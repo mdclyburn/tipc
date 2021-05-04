@@ -11,6 +11,7 @@ public:
   ASTExpr* getPtr() const { return PTR.get(); }
   void accept(ASTVisitor * visitor) override;
   llvm::Value* codegen() override;
+  ASTNode* instantiate() const override;
 
 protected:
   std::ostream& print(std::ostream &out) const override;

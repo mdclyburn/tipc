@@ -17,7 +17,7 @@ class ASTVisitor;
  * A key concept to undestand is that of "ownership".   Every node in the
  * tree is "owned" by its parent.  The parent maintains a "unique pointer"
  * to each of its children.  This greatly simplifies memory management as
- * the tree can be reclaimed once its root is no longer needed.  It is 
+ * the tree can be reclaimed once its root is no longer needed.  It is
  * important to understand that the "unique pointer" is only used to manage
  * the lifetime of the child nodes.  The values of those pointers can be
  * passed around freely to other parts of the compiler that want to view
@@ -29,7 +29,7 @@ class ASTVisitor;
  * the print method.
  *
  * There are two virtual methods that are used in a generic visitor
- * and for code generation pass. 
+ * and for code generation pass.
  */
 class ASTNode {
   int line = 0;
@@ -49,13 +49,13 @@ public:
    * \param visitor The subtype of ASTVisitor that carries out per-ASTNode work.
    */
   virtual void accept(ASTVisitor * visitor) = 0;
-  
+
   /*! \fn codegen
    *  \brief Perform code generation and return an LLVM value the code.
    *
    * This virtual function is overridden by each ASTNode subtype in order
    * to generate the executable code.  This function does not use the visitor
-   * due to the fact that a high-degree of control on the ordering of the 
+   * due to the fact that a high-degree of control on the ordering of the
    * nodes is required.
    *
    * \return LLVM value holding an representation of the generated code.
@@ -65,6 +65,8 @@ public:
   void setLocation(int l, int c) { line = l; column = c; }
   int getLine() { return line; }
   int getColumn() { return column; }
+
+  virtual ASTNode* instantiate() const = 0;
 
   friend std::ostream& operator<<(std::ostream& os, const ASTNode& obj) {
     return obj.print(os);

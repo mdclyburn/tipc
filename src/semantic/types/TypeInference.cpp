@@ -14,15 +14,12 @@ std::unique_ptr<TypeInference> TypeInference::check(ASTProgram* ast, SymbolTable
   // Identify polymorphic functions.
   PolymorphicIdentifierVisitor f_visitor(symbols);
   ast->accept(&f_visitor);
-  auto polys = f_visitor.polymorphicFunctions();
-  for (auto fn_name : polys) {
-    std::cout << "Polymorphic function: " << fn_name << std::endl;
-  }
 
-  TypeConstraintCollectVisitor visitor(symbols);
+  const auto& inferences = f_visitor.inferences();
+  TypeConstraintCollectVisitor visitor(symbols, f_visitor.polymorphicInferences());
   ast->accept(&visitor);
 
-  auto unifier =  std::make_unique<Unifier>(visitor.getCollectedConstraints());
+  auto unifier = std::make_unique<Unifier>(visitor.getCollectedConstraints());
   unifier->solve();
 
   return std::make_unique<TypeInference>(symbols, std::move(unifier));

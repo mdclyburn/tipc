@@ -13,6 +13,7 @@ public:
   std::vector<ASTFieldExpr*> getFields() const;
   void accept(ASTVisitor * visitor) override;
   llvm::Value* codegen() override;
+  ASTNode* instantiate() const override;
 
 protected:
   std::ostream& print(std::ostream &out) const override;

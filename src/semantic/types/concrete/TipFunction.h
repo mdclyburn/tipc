@@ -24,10 +24,15 @@ public:
 
   void accept(TipTypeVisitor *visitor) override;
 
+  TipType* instantiate() const override;
+  bool isInstantiated() const;
+
 protected:
   std::ostream& print(std::ostream &out) const override;
 
 private:
-  std::vector<std::shared_ptr<TipType>> combine(std::vector<std::shared_ptr<TipType>> params, std::shared_ptr<TipType> ret);
+  static uint32_t instance;
 
+  bool __is_instantiated;
+  std::vector<std::shared_ptr<TipType>> combine(std::vector<std::shared_ptr<TipType>> params, std::shared_ptr<TipType> ret);
 };

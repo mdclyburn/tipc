@@ -33,3 +33,15 @@ void TipVar::accept(TipTypeVisitor * visitor) {
 bool TipVar::containsFreeVariable() const {
   return false;
 }
+
+TipType* TipVar::instantiate() const {
+  TipVar* const t = new TipVar(this->node->instantiate());
+  t->node->setLocation(this->node->getLine(), this->node->getColumn());
+
+  return t;
+}
+
+void TipVar::replaceAlpha(const std::shared_ptr<TipAlpha>& original,
+                          const std::shared_ptr<TipAlpha>& replacement) {
+  return;
+}
