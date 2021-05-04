@@ -2,6 +2,8 @@ add_library(types)
 target_sources(types PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/PolymorphicIdentifierVisitor.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/PolymorphicIdentifierVisitor.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/CalleeIdentifier.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/CalleeIdentifier.h
         ${CMAKE_CURRENT_SOURCE_DIR}/TypeInference.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/TypeInference.h
         ${CMAKE_CURRENT_SOURCE_DIR}/concrete/TipAlpha.cpp
