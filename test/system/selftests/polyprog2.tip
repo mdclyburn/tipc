@@ -1,0 +1,12 @@
+poly(p){
+    return *p;
+}
+
+main(){
+    var n, k;
+    n=alloc 42;
+    if (poly(n) != 42) error poly(n);
+    k = alloc 3;
+    if (*poly(&k) != 3) error *poly(&k);
+    return 0;
+}

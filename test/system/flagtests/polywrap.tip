@@ -1,0 +1,10 @@
+one(k) { return *k; }
+two(k) { return one(k); }
+main() {
+	var a, b, c, d;
+	a = alloc 2;
+	b = alloc 3;
+	c = two(a);
+	d = two(&b);
+	return 0;
+}

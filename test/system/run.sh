@@ -140,6 +140,17 @@ do
   fi 
 done
 
+# Testing happy path for direct recursion flag
+initialize_test
+${TIPC} -pp -pt -dr flagtests/polywrap.tip >${SCRATCH_DIR}/polywrap.tip.pppt
+diff flagtests/polywrap.tip.pppt ${SCRATCH_DIR}/polywrap.tip.pppt >${SCRATCH_DIR}/polywrap.diff
+if [[ -s ${SCRATCH_DIR}/polywrap.diff ]]
+then
+  echo -n "Test differences for : polywrap.tip"
+  cat ${SCRATCH_DIR}/polywrap.diff
+  ((numfailures++))
+fi 
+
 # Logging test 
 #   kick the tires on logging to make sure there are null pointer derefs
 initialize_test

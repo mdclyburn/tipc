@@ -15,15 +15,15 @@ main()
 }
 
 Functions : {
-  foo : (int,int,int) -> {l:int,m:int,n:int},
+  foo : (α<x>,α<y>,α<z>) -> {l:α<x>,m:α<y>,n:α<z>},
   main : () -> int
 }
 
 Locals for function foo : {
-  rec : {l:int,m:int,n:int},
-  x : int,
-  y : int,
-  z : int
+  rec : {l:α<x>,m:α<y>,n:α<z>},
+  x : α<x>,
+  y : α<y>,
+  z : α<z>
 }
 
 Locals for function main : {

@@ -102,7 +102,6 @@ TipType* TipFunction::instantiate() const {
       auto repl_alpha = std::shared_ptr<TipAlpha>(
         new TipAlpha(arg_alpha->getNode(), inst_name));
       replacement_alphas[arg_alpha] = repl_alpha;
-      std::cout << "test \n";
     }
   }
 

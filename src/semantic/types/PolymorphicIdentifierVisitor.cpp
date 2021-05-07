@@ -49,9 +49,6 @@ bool PolymorphicIdentifierVisitor::visit(ASTFunction* element)
       function_name,
       std::dynamic_pointer_cast<TipFunction>(inferred_type)
     });
-  std::cout << "Inferred type for "
-            << "'" << function_name << "': "
-            << *inferred_type << std::endl;
 
   if (inferred_type->containsFreeVariable()) {
     // We want to look for function calls in this function.
