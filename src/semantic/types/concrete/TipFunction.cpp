@@ -71,10 +71,6 @@ void TipFunction::accept(TipTypeVisitor * visitor) {
   visitor->endVisit(this);
 }
 
-bool TipFunction::isInstantiated() const {
-  return this->__is_instantiated;
-}
-
 TipType* TipFunction::instantiate() const {
   const std::string instance_suffix = "-" + std::to_string(TipFunction::instance);
 
@@ -84,7 +80,7 @@ TipType* TipFunction::instantiate() const {
   std::map<std::shared_ptr<TipAlpha>, std::shared_ptr<TipAlpha>> replacement_alphas;
 
   // Recreate parameters for the function.
-  std::vector<std::shared_ptr<TipAlpha>> ret_alphas; 
+  std::vector<std::shared_ptr<TipAlpha>> ret_alphas;
 
   if (auto alpha_arg = std::dynamic_pointer_cast<TipAlpha>(this->getReturnValue())) {
     ret_alphas.push_back(alpha_arg);
@@ -105,7 +101,7 @@ TipType* TipFunction::instantiate() const {
     }
   }
 
-  for (auto arg : this->getParams()) {  // 
+  for (auto arg : this->getParams()) {  //
     // Find all alphas that will need to be handled specially.
     std::vector<std::shared_ptr<TipAlpha>> arg_alphas;
     if (auto alpha_arg = std::dynamic_pointer_cast<TipAlpha>(arg)) {
@@ -117,8 +113,6 @@ TipType* TipFunction::instantiate() const {
     // Instantiate alphas and add them to replacement_alphas so they can
     // be re-used in parameters that have the same alpha.
     for (auto arg_alpha : arg_alphas) {
-      // TODO: need a better way of accessing and finding alpha variables.
-      // Pointers do not match, but using TipAlpha::operator== does.
       auto find_res = std::find_if(
         replacement_alphas.begin(),
         replacement_alphas.end(),
@@ -151,16 +145,12 @@ TipType* TipFunction::instantiate() const {
   std::shared_ptr<TipType> ret;
   if (auto alpha = std::dynamic_pointer_cast<TipAlpha>(this->getReturnValue())) {
     std::shared_ptr<TipAlpha> match;
-    // TODO: could use a better strategy for getting the match.
-    // This would be fixed by a better way to index into the map.
     for (auto kv : replacement_alphas) {
       if (*alpha == *kv.first) {
         match = kv.second;
         break;
       }
     }
-
-    assert(match != nullptr); // Gross...
     ret = match;
   } else {
     ret = std::shared_ptr<TipType>(this->getReturnValue()->instantiate());
@@ -170,7 +160,6 @@ TipType* TipFunction::instantiate() const {
   }
 
   TipFunction* const f = new TipFunction(args, ret);
-  f->__is_instantiated = true; // <- Is this used in some way?
 
   TipFunction::instance++;
 
